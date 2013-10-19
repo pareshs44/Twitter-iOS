@@ -168,66 +168,6 @@ static NSDictionary * AFKeyChainQueryDictionaryWithIdentifier(NSString * identif
     return self;
 }
 
-+ (TwitterOAuthToken *)retrieveCredentialWithIdentifier:(NSString *)identifier {
-    NSMutableDictionary *mutableQueryDictionary = [AFKeyChainQueryDictionaryWithIdentifier(identifier) mutableCopy];
-    mutableQueryDictionary[(__bridge id)kSecReturnData] = (__bridge id)kCFBooleanTrue;
-    mutableQueryDictionary[(__bridge id)kSecMatchLimit] = (__bridge id)kSecMatchLimitOne;
-    
-    CFDataRef result = nil;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)mutableQueryDictionary, (CFTypeRef *)&result);
-    
-    if (status != errSecSuccess) {
-        NSLog(@"Unable to fetch credential with identifier \"%@\" (Error %li)", identifier, (long int)status);
-        return nil;
-    }
-    
-    NSData *data = (__bridge_transfer NSData *)result;
-    TwitterOAuthToken *credential = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-    
-    return credential;
-}
-
-+ (BOOL)deleteCredentialWithIdentifier:(NSString *)identifier {
-    NSMutableDictionary *mutableQueryDictionary = [AFKeyChainQueryDictionaryWithIdentifier(identifier) mutableCopy];
-    
-    OSStatus status = SecItemDelete((__bridge CFDictionaryRef)mutableQueryDictionary);
-    
-    if (status != errSecSuccess) {
-        NSLog(@"Unable to delete credential with identifier \"%@\" (Error %li)", identifier, (long int)status);
-    }
-    
-    return (status == errSecSuccess);
-}
-
-+ (BOOL)storeCredential:(TwitterOAuthToken *)credential withIdentifier:(NSString *)identifier
-{
-    NSMutableDictionary *mutableQueryDictionary = [AFKeyChainQueryDictionaryWithIdentifier(identifier) mutableCopy];
-    
-    if (!credential) {
-        return [self deleteCredentialWithIdentifier:identifier];
-    }
-    
-    NSMutableDictionary *mutableUpdateDictionary = [NSMutableDictionary dictionary];
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:credential];
-    mutableUpdateDictionary[(__bridge id)kSecValueData] = data;
-    
-    OSStatus status;
-    BOOL exists = !![self retrieveCredentialWithIdentifier:identifier];
-    
-    if (exists) {
-        status = SecItemUpdate((__bridge CFDictionaryRef)mutableQueryDictionary, (__bridge CFDictionaryRef)mutableUpdateDictionary);
-    } else {
-        [mutableQueryDictionary addEntriesFromDictionary:mutableUpdateDictionary];
-        status = SecItemAdd((__bridge CFDictionaryRef)mutableQueryDictionary, NULL);
-    }
-    
-    if (status != errSecSuccess) {
-        NSLog(@"Unable to %@ credential with identifier \"%@\" (Error %li)", exists ? @"update" : @"add", identifier, (long int)status);
-    }
-    
-    return (status == errSecSuccess);
-}
-
 #pragma mark - NSCoding
 
 - (id)initWithCoder:(NSCoder *)decoder {
@@ -422,7 +362,7 @@ static NSString * const AUTHORIZATION_PATH = @"/oauth/authorize";
     return request;
 }
 
--(void) logInToTwitterWithSuccess:(void (^)(NSMutableArray * results))success
+-(void) logInToTwitterWithSuccess:(void (^)(TwitterOAuthToken * accessToken))success
 {
     NSMutableDictionary * parameters = [[self OAuthParameters] mutableCopy];
     NSURL * callbackURL = [NSURL URLWithString:CALLBACK_URL_STRING];
@@ -449,9 +389,8 @@ static NSString * const AUTHORIZATION_PATH = @"/oauth/authorize";
             
             AFHTTPRequestOperation * operation = [self HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
                 self.accessToken = [[TwitterOAuthToken alloc] initWithQueryString:operation.responseString];
-                NSLog(@"Access TOken: %@", self.accessToken.key);
                 if(success) {
-                    success(responseObject);
+                    success(self.accessToken);
                 }
                 
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -473,6 +412,21 @@ static NSString * const AUTHORIZATION_PATH = @"/oauth/authorize";
     [self enqueueHTTPRequestOperation:operation];
 }
 
+-(void) verifyUserCredentialsWithSuccess:(void(^)(NSMutableArray * results))success
+{
+    NSString * accountVerifyURL = @"account/verify_credentials.json";
+    NSMutableURLRequest * request = [self requestWithMethod:@"GET" path:accountVerifyURL parameters:nil];
+    AFHTTPRequestOperation * operation = [self HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSMutableArray * results = (NSMutableArray *)responseObject;
+        if(success) {
+            success(results);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+    [self enqueueHTTPRequestOperation:operation];
+}
+
 
 -(void) fetchHomeTimelineWithSuccess:(void(^)(NSMutableArray * results))success
 {
@@ -483,11 +437,10 @@ static NSString * const AUTHORIZATION_PATH = @"/oauth/authorize";
         if(success) {
             success(results);
         }
-            NSLog(@"response: %@", results[0]);
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
-        }];
-        [self enqueueHTTPRequestOperation:operation];
+    }];
+    [self enqueueHTTPRequestOperation:operation];
 }
 
 -(void) postTweetWithParameters:(NSMutableDictionary *) parameters

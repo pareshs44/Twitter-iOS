@@ -7,56 +7,14 @@
 //
 
 #import "AppDelegate.h"
-#import "ResultsTableViewController.h"
+#import "TwitterOAuthClient.h"
 
-#define CLIENT_KEY @"R9sI6x6sZQdFzHK912tIQw"
-#define CLIENT_SECRET @"9xFxAYxaTFFmSEJj67lBwDHKAzWakSst0xiJtRcniDs"
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    /*
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.window.backgroundColor = [UIColor whiteColor];
-    self.window.rootViewController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
-    [self.window makeKeyAndVisible];
-    
-    NSString * urlString = @"https://api.twitter.com/1.1/";
-    self.twitterClient = [[AFOAuth1Client alloc] initWithBaseURL:[NSURL URLWithString:urlString] key:CLIENT_KEY secret:CLIENT_SECRET];
-    [self.twitterClient authorizeUsingOAuthWithRequestTokenPath:@"/oauth/request_token"
-                                          userAuthorizationPath:@"/oauth/authorize"
-                                                    callbackURL:[NSURL URLWithString:@"af-twitter://success"]
-                                                accessTokenPath:@"/oauth/access_token"
-                                                   accessMethod:@"POST"
-                                                          scope:nil
-                                                        success:^(AFOAuth1Token *accessToken, id responseObject) {
-                                                            [self.twitterClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-                                                            [self.twitterClient getPath:@"statuses/user_timeline.json"
-                                                                             parameters:nil
-                                                                                success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                                                                                    NSArray * responseArray = (NSArray *) responseObject;
-                                                                                    [responseArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                                                                                        NSLog(@"Success : %@", obj);
-                                                                                    }];
-                                                                                }
-                                                                                failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                                                    NSLog(@"Error: %@", error);
-                                                                                }];
-                                                        }
-                                                        failure:^(NSError *error) {
-                                                            NSLog(@"Error : %@", error);
-                                                        }];
-    
-    */ 
     return YES;
-    
-    
-    
-    
-    
-    
-    
     // Override point for customization after application launch.
 }
 
@@ -66,10 +24,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
          annotation:(id)annotation
 {
     
-    NSNotification * notification  = [NSNotification notificationWithName:kAFApplicationLaunchedWithURLNotification
+    NSNotification * notification  = [NSNotification notificationWithName:kTwitterApplicationLaunchedWithURLNotification
                                                                    object:nil
                                                                  userInfo:[NSDictionary dictionaryWithObject:url
-                                                                                                      forKey:kAFApplicationLaunchOptionsURLKey]];
+                                                                                                      forKey:kTwitterApplicationLaunchOptionsURLKey]];
     [[NSNotificationCenter defaultCenter] postNotification:notification];
     
     return YES;

@@ -16,7 +16,8 @@
 @property (nonatomic, strong) TwitterOAuthToken *accessToken;
 
 +(TwitterOAuthClient *) sharedInstance;
--(void) logInToTwitterWithSuccess:(void (^)(NSMutableArray * results))success;
+-(void) logInToTwitterWithSuccess:(void (^)(TwitterOAuthToken * accessToken))success;
+-(void) verifyUserCredentialsWithSuccess:(void(^)(NSMutableArray * results))success;
 -(void) fetchHomeTimelineWithSuccess:(void(^)(NSMutableArray * results))success;
 -(void) postTweetWithParameters:(NSMutableDictionary *) parameters;
 
@@ -26,8 +27,8 @@
 
 @end
 
-extern NSString * const kAFApplicationLaunchedWithURLNotification;
-extern NSString * const kAFApplicationLaunchOptionsURLKey;
+extern NSString * const kTwitterApplicationLaunchedWithURLNotification;
+extern NSString * const kTwitterApplicationLaunchOptionsURLKey;
 
 @interface TwitterOAuthToken : NSObject <NSCopying, NSCoding>
 @property (readonly, nonatomic, copy) NSString * key;
@@ -37,9 +38,4 @@ extern NSString * const kAFApplicationLaunchOptionsURLKey;
 
 -(id) initWithQueryString: (NSString *)queryString;
 -(id) initWithkey:(NSString *)key secret:(NSString *)secret;
-+(TwitterOAuthToken *) retrieveCredentialWithIdentifier:(NSString *)identifier;
-+(BOOL) deleteCredentialWithIdentifier:(NSString *) identifier;
-+(BOOL) storeCredential: (TwitterOAuthToken *) credential withIdentifier: (NSString *) identifier;
-
-
 @end

@@ -7,11 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TwitterClient.h"
 #import "TwitterOAuthClient.h"
 
 @interface IndexViewController : UIViewController
-@property (strong, nonatomic) TwitterClient * twitterClient;
-@property (strong, nonatomic) TwitterOAuthClient * twitterOAuthClient;
 
 @end

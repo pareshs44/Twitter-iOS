@@ -8,7 +8,6 @@
 
 #import "IndexViewController.h"
 #import "ResultsTableViewController.h"
-#import "TwitterOAuthClient.h"
 
 @interface IndexViewController ()
 
@@ -16,64 +15,36 @@
 
 @implementation IndexViewController
 
--(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    [self.twitterOAuthClient fetchHomeTimelineWithSuccess:^(NSMutableArray *results) {
-
-        ResultsTableViewController * rtvc = [[[[segue.destinationViewController viewControllers] objectAtIndex:0] viewControllers] objectAtIndex:0];
-    
-    rtvc.results = (NSMutableArray *)results;
-
-    rtvc.title = @"User Timeline";
-    [rtvc.tableView reloadData];
-    }];
-    
-    
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-//    NSString * indexBackground = [NSString stringWithFormat:@"indexBackground.png"];
-//    UIImageView * backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:indexBackground]];
-//    [self.view addSubview:backgroundImage];
-//    [self.view sendSubviewToBack:backgroundImage];
-	// Do any additional setup after loading the view.
 }
-
-- (IBAction)logInWithToken:(id)sender {
-    self.twitterOAuthClient = [TwitterOAuthClient sharedInstance];
-    //[self.twitterOAuthClient logInToTwitter];
-}
-
 
 - (IBAction)logIn:(id)sender {
-    self.twitterOAuthClient = [TwitterOAuthClient sharedInstance];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    dispatch_queue_t logInQ = dispatch_queue_create("LogIn Queue", NULL);
     
-    dispatch_async(logInQ, ^{
-        [self.twitterOAuthClient logInToTwitterWithSuccess:^(NSMutableArray *results) {
-            [self performSegueWithIdentifier:@"Successful LogIn" sender:self];
-        }];
-         
-    /*:^{
-            
-            //UITabBarController *tabBar = [self.storyboard instantiateViewControllerWithIdentifier:@"HomeViewController"];
-            //ResultsTableViewController *rtvc = (ResultsTableViewController *)[[(UINavigationController *)[tabBar.viewControllers objectAtIndex:0] viewControllers] objectAtIndex:0];
-
-            //[self presentViewController:tabBar animated:YES completion:nil];
-
-
-
-                    [self performSegueWithIdentifier:@"Successful LogIn" sender:self];
-
-
-                }];
-     */
-
-     });
+    TwitterOAuthToken * storedToken = (TwitterOAuthToken *)[NSKeyedUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults]objectForKey:@"accessToken"]];
+    dispatch_queue_t logInQ = dispatch_queue_create("LogIn Queue", NULL);
+    if(storedToken) {
+        [TwitterOAuthClient sharedInstance].accessToken = storedToken;
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+        dispatch_async(logInQ, ^{
+            [[TwitterOAuthClient sharedInstance] verifyUserCredentialsWithSuccess:^(NSMutableArray *results) {
+                [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+                [self performSegueWithIdentifier:@"Successful LogIn" sender:self];
+            }];
+        });
+    }
+    else {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+        dispatch_queue_t logInQ = dispatch_queue_create("LogIn Queue", NULL);
+        dispatch_async(logInQ, ^{
+            [[TwitterOAuthClient sharedInstance] logInToTwitterWithSuccess:^(TwitterOAuthToken *accessToken) {
+                [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+                [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:accessToken] forKey:@"accessToken"];
+                [self performSegueWithIdentifier:@"Successful LogIn" sender:self];
+            }];
+        });
+    }
 }
 
 @end
