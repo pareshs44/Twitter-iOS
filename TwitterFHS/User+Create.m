@@ -30,6 +30,7 @@
             user.name = userDictionary[@"name"];
             user.screenName = userDictionary[@"screenName"];
             user.unique = userDictionary[@"unique"];
+            user.thumbnail = userDictionary[@"thumbnail"];
          }
         else {
             user = [matches lastObject];
