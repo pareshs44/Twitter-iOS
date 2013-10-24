@@ -247,7 +247,6 @@ static NSString * const AUTHORIZATION_PATH = @"/oauth/authorize";
     static TwitterOAuthClient * mySharedInstance = nil;
     static dispatch_once_t onceOnly;
     dispatch_once(&onceOnly, ^{
-        NSLog(@"Initializing TwitterOAuthClient shared instance");
         mySharedInstance = [[TwitterOAuthClient alloc] init];
     });
     return mySharedInstance;
@@ -442,6 +441,42 @@ static NSString * const AUTHORIZATION_PATH = @"/oauth/authorize";
     }];
     [self enqueueHTTPRequestOperation:operation];
 }
+
+-(void) fetchHomeTimelineAfterId:(NSString *)maxId WithSuccess:(void(^)(NSMutableArray * results))success
+{
+    NSString * homeTimelineURL = @"statuses/home_timeline.json";
+    NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObject:[NSString stringWithString:maxId] forKey:@"max_id"];
+    NSMutableURLRequest * request = [self requestWithMethod:@"GET" path:homeTimelineURL parameters:parameters];
+    AFHTTPRequestOperation * operation = [self HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSMutableArray * results = (NSMutableArray *)responseObject;
+        if(success) {
+            success(results);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+    [self enqueueHTTPRequestOperation:operation];
+}
+
+
+-(void) fetchTimelineOfUser: (NSString *)screenName withSuccess:(void(^)(NSMutableArray * results))success
+{
+    NSString * userTimelineURL = @"statuses/user_timeline.json";
+    NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObject:[NSString stringWithString:screenName] forKey:@"screen_name"];
+    
+    NSMutableURLRequest * request = [self requestWithMethod:@"GET" path:userTimelineURL parameters:parameters];
+    AFHTTPRequestOperation * operation = [self HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSMutableArray * results = (NSMutableArray *)responseObject;
+        if(success) {
+            success(results);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+    [self enqueueHTTPRequestOperation:operation];
+}
+
+
 
 -(void) postTweetWithParameters:(NSMutableDictionary *) parameters
 {

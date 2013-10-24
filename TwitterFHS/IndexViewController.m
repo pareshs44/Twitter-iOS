@@ -7,20 +7,21 @@
 //
 
 #import "IndexViewController.h"
-#import "ResultsTableViewController.h"
 
 @interface IndexViewController ()
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 @end
 
 @implementation IndexViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
+    [self.activityIndicator stopAnimating];
 }
 
 - (IBAction)logIn:(id)sender {
+    [self.activityIndicator startAnimating];
     
     TwitterOAuthToken * storedToken = (TwitterOAuthToken *)[NSKeyedUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults]objectForKey:@"accessToken"]];
     dispatch_queue_t logInQ = dispatch_queue_create("LogIn Queue", NULL);
@@ -30,6 +31,7 @@
         dispatch_async(logInQ, ^{
             [[TwitterOAuthClient sharedInstance] verifyUserCredentialsWithSuccess:^(NSMutableArray *results) {
                 [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+                [self.activityIndicator stopAnimating];
                 [self performSegueWithIdentifier:@"Successful LogIn" sender:self];
             }];
         });
@@ -41,6 +43,7 @@
             [[TwitterOAuthClient sharedInstance] logInToTwitterWithSuccess:^(TwitterOAuthToken *accessToken) {
                 [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
                 [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:accessToken] forKey:@"accessToken"];
+                [self.activityIndicator stopAnimating];
                 [self performSegueWithIdentifier:@"Successful LogIn" sender:self];
             }];
         });

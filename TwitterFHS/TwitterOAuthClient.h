@@ -19,6 +19,8 @@
 -(void) logInToTwitterWithSuccess:(void (^)(TwitterOAuthToken * accessToken))success;
 -(void) verifyUserCredentialsWithSuccess:(void(^)(NSMutableArray * results))success;
 -(void) fetchHomeTimelineWithSuccess:(void(^)(NSMutableArray * results))success;
+-(void) fetchHomeTimelineAfterId:(NSString *)maxId WithSuccess:(void(^)(NSMutableArray * results))success;
+-(void) fetchTimelineOfUser: (NSString *)screenName withSuccess:(void(^)(NSMutableArray * results))success;
 -(void) postTweetWithParameters:(NSMutableDictionary *) parameters;
 
 //-(void) fetchMentionsTimelineWithSuccess:(void(^)(NSMutableArray * results))success;
