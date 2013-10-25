@@ -28,19 +28,7 @@
 {
     [super viewDidLoad];
     [self.composeTweettTextView becomeFirstResponder];
-	// Do any additional setup after loading the view.
 }
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-//{
-  //  NSUInteger newLength = [textField.text length] + [string length] - range.length;
-    //return (newLength > 14) ? NO : YES;
-//}
 
 -(BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
