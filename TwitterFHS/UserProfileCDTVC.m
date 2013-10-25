@@ -47,7 +47,6 @@ static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
         [UseDocument useDocumentWithSuccess:^(UIManagedDocument *document) {
             self.managedObjectContext = document.managedObjectContext;
             [self refresh];
-            //[self setLabels];
         }];
 }
 
@@ -59,7 +58,6 @@ static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
         request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique" ascending:NO]];
         request.predicate = [NSPredicate predicateWithFormat:@"createdBy.screenName = %@", [TwitterOAuthClient sharedInstance].accessToken.userInfo[@"screen_name"]];
         self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:managedObjectContext sectionNameKeyPath:nil cacheName:nil];
-        [self setLabels];
     }
     else {
         self.fetchedResultsController = nil;
@@ -142,7 +140,8 @@ static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
         {
             [self.managedObjectContext performBlock:^{
                 for(NSDictionary * tweet in results) {
-                    [Tweet tweetWithDetails:tweet inHomeTimeline:[[NSNumber alloc] initWithBool:NO] inManagedObjectContext:self.managedObjectContext];;
+                    [Tweet tweetWithDetails:tweet inHomeTimeline:[[NSNumber alloc] initWithBool:NO] inManagedObjectContext:self.managedObjectContext];
+                    [self setLabels];
                 }
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.refreshControl endRefreshing];
@@ -169,6 +168,7 @@ static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
             [self.managedObjectContext performBlock:^{
                 for(NSDictionary * tweet in results) {
                     [Tweet tweetWithDetails:tweet inHomeTimeline:[NSNumber numberWithBool:NO] inManagedObjectContext:self.managedObjectContext];
+                    [self setLabels];
                 }
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.activityIndicator stopAnimating];
