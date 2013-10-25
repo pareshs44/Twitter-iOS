@@ -9,9 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface TweetCell : UITableViewCell
-@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
-@property (weak, nonatomic) IBOutlet UILabel *subtitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *creatorLabel;
+@property (weak, nonatomic) IBOutlet UILabel *contentLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *thumbnailImageView;
-
 @end

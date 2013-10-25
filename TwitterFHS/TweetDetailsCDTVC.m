@@ -14,10 +14,15 @@
 #import "TwitterOAuthClient.h"
 
 @interface TweetDetailsCDTVC ()
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 @end
 
 @implementation TweetDetailsCDTVC
+static NSString * MAX_ID = @"9999999999999999";
+static CGFloat const IMAGE_HORIZONTAL_PADDING = 20.0f;
+static CGFloat const RIGHT_HORIZONTAL_PADDING = 10.0f;
+static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
 
 -(void) viewDidLoad
 {
@@ -28,6 +33,11 @@
     
 }
 
+-(void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self refresh];
+}
 
 -(void) setCreatedBy:(User *)createdBy
 {
@@ -49,23 +59,71 @@
     }
 }
 
--(void) viewWillAppear:(BOOL)animated
+
+-(CGFloat) tableView:(UITableView *) tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [super viewWillAppear:animated];
-    [self refresh];
+    TweetCell * cell = [tableView dequeueReusableCellWithIdentifier:@"userTweet"];
+    Tweet * tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
+    cell.contentLabel.text = tweet.content;
+    cell.creatorLabel.text = tweet.createdBy.name;
+    UIImage * image = [[UIImage alloc] initWithData:tweet.createdBy.thumbnail];
+    cell.thumbnailImageView.image = image;
+    
+    CGFloat imageWidth = image.size.width;
+    cell.contentLabel.preferredMaxLayoutWidth = cell.contentLabel.superview.bounds.size.width - (imageWidth + IMAGE_HORIZONTAL_PADDING + LABEL_HORIZONTAL_PADDING + RIGHT_HORIZONTAL_PADDING);
+    [cell.contentView setNeedsLayout];
+    [cell.contentView layoutIfNeeded];
+    CGFloat height = [cell.contentView systemLayoutSizeFittingSize:UILayoutFittingExpandedSize].height;
+    return height;
 }
+
+- (CGFloat) tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 60.0f;
+}
+
+-(TweetCell *) tableView:(UITableView *) tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    TweetCell * cell = [tableView dequeueReusableCellWithIdentifier:@"userTweet"];
+    Tweet * tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    cell.contentLabel.text = tweet.content;
+    cell.creatorLabel.text = tweet.createdBy.name;
+    cell.timeLabel.text = [[tweet.time substringFromIndex:4] substringToIndex:12];
+    UIImage * image = [[UIImage alloc] initWithData:tweet.createdBy.thumbnail];
+    cell.thumbnailImageView.image = image;
+    return cell;
+}
+
+-(void) scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    CGPoint offset = scrollView.contentOffset;
+    CGRect bounds = scrollView.bounds;
+    CGSize size = scrollView.contentSize;
+    UIEdgeInsets inset = scrollView.contentInset;
+    float y = offset.y + bounds.size.height - inset.bottom;
+    float h = size.height;
+    float reload_distance = 2;
+    if(y > h + reload_distance) {
+        [self fetchMoreTweets];
+    }
+}
+
+
+
 
 - (IBAction)refresh
 {
     [self.refreshControl beginRefreshing];
+    NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObject:[NSString stringWithString:self.createdBy.screenName] forKey:@"screen_name"];
     dispatch_queue_t feedQ = dispatch_queue_create("Feed Fetch", NULL);
     dispatch_async(feedQ, ^{
         //NSArray * feeds = [client fetchTimeline];
-        [[TwitterOAuthClient sharedInstance] fetchTimelineOfUser:self.createdBy.screenName withSuccess:^(NSMutableArray *results)
+        [[TwitterOAuthClient sharedInstance] fetchUserTimelineHavingParameters:parameters withSuccess:^(NSMutableArray *results)
         {
             [self.createdBy.managedObjectContext performBlock:^{
                 for(NSDictionary * tweet in results) {
-                    [Tweet tweetWithDetails:tweet inManagedObjectContext:self.createdBy.managedObjectContext];
+                    [Tweet tweetWithDetails:tweet inHomeTimeline:[NSNumber numberWithBool:NO] inManagedObjectContext:self.createdBy.managedObjectContext];
                 }
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.refreshControl endRefreshing];
@@ -75,15 +133,29 @@
     });
 }
 
--(TweetCell *) tableView:(UITableView *) tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+-(void) fetchMoreTweets
 {
-    TweetCell * cell = [tableView dequeueReusableCellWithIdentifier:@"userTweet"];
-    Tweet * tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    cell.titleLabel.text = tweet.content;
-    cell.subtitleLabel.text = tweet.createdBy.name;
-    //cell.titleLabel.text = tweet.createdBy.screenName;
-    UIImage * image = [[UIImage alloc] initWithData:tweet.createdBy.thumbnail];
-    cell.thumbnailImageView.image = image;
-    return cell;
+    NSIndexPath *path = [self.tableView indexPathForCell:[[self.tableView visibleCells] lastObject]];
+    Tweet * tweet = [self.fetchedResultsController objectAtIndexPath:path];
+    NSString * maxId = tweet.unique;
+    NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObject:[NSString stringWithString:self.createdBy.screenName] forKey:@"screen_name"];
+    [parameters setObject:maxId forKey:@"max_id"];
+    
+    [self.activityIndicator startAnimating];
+    dispatch_queue_t feedQ = dispatch_queue_create("Feed Fetch", NULL);
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    dispatch_async(feedQ, ^{
+        [[TwitterOAuthClient sharedInstance] fetchUserTimelineHavingParameters:parameters withSuccess:^(NSMutableArray *results) {
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+            [self.createdBy.managedObjectContext performBlock:^{
+                for(NSDictionary * tweet in results) {
+                    [Tweet tweetWithDetails:tweet inHomeTimeline:[NSNumber numberWithBool:NO] inManagedObjectContext:self.createdBy.managedObjectContext];
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.activityIndicator stopAnimating];
+                });
+            }];
+        }];
+    });
 }
 @end

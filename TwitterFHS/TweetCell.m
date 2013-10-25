@@ -15,9 +15,6 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        [self.titleLabel sizeToFit];
-        [self.titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleBody]];
-        [self.subtitleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleBody]];
     }
     return self;
 }

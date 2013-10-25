@@ -9,6 +9,7 @@
 #import "ComposeTweetViewController.h"
 
 @interface ComposeTweetViewController ()
+@property (weak, nonatomic) IBOutlet UILabel *characters;
 
 @end
 
@@ -43,8 +44,8 @@
 
 -(BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-    NSLog(@"%@",text);
     NSUInteger newLength = [textView.text length] + [text length] - range.length;
+    self.characters.text = [NSString stringWithFormat:@"%u", ((newLength >140)?0:(140-newLength))];
     return (newLength > 140) ? NO : YES;
 }
 

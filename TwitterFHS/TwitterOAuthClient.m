@@ -427,10 +427,10 @@ static NSString * const AUTHORIZATION_PATH = @"/oauth/authorize";
 }
 
 
--(void) fetchHomeTimelineWithSuccess:(void(^)(NSMutableArray * results))success
+-(void) fetchHomeTimelineHavingParameters:(NSMutableDictionary *)parameters WithSuccess:(void(^)(NSMutableArray * results))success
 {
     NSString * homeTimelineURL = @"statuses/home_timeline.json";
-    NSMutableURLRequest * request = [self requestWithMethod:@"GET" path:homeTimelineURL parameters:nil];
+    NSMutableURLRequest * request = [self requestWithMethod:@"GET" path:homeTimelineURL parameters:parameters];
     AFHTTPRequestOperation * operation = [self HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSMutableArray * results = (NSMutableArray *)responseObject;
         if(success) {
@@ -442,28 +442,9 @@ static NSString * const AUTHORIZATION_PATH = @"/oauth/authorize";
     [self enqueueHTTPRequestOperation:operation];
 }
 
--(void) fetchHomeTimelineAfterId:(NSString *)maxId WithSuccess:(void(^)(NSMutableArray * results))success
-{
-    NSString * homeTimelineURL = @"statuses/home_timeline.json";
-    NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObject:[NSString stringWithString:maxId] forKey:@"max_id"];
-    NSMutableURLRequest * request = [self requestWithMethod:@"GET" path:homeTimelineURL parameters:parameters];
-    AFHTTPRequestOperation * operation = [self HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSMutableArray * results = (NSMutableArray *)responseObject;
-        if(success) {
-            success(results);
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-    }];
-    [self enqueueHTTPRequestOperation:operation];
-}
-
-
--(void) fetchTimelineOfUser: (NSString *)screenName withSuccess:(void(^)(NSMutableArray * results))success
+-(void) fetchUserTimelineHavingParameters:(NSMutableDictionary *)parameters withSuccess:(void(^)(NSMutableArray * results))success
 {
     NSString * userTimelineURL = @"statuses/user_timeline.json";
-    NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObject:[NSString stringWithString:screenName] forKey:@"screen_name"];
-    
     NSMutableURLRequest * request = [self requestWithMethod:@"GET" path:userTimelineURL parameters:parameters];
     AFHTTPRequestOperation * operation = [self HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSMutableArray * results = (NSMutableArray *)responseObject;

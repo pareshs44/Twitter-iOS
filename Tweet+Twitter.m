@@ -9,38 +9,35 @@
 #import "Tweet+Twitter.h"
 #import "User+Create.h"
 #import "User.h"
-#import "TwitterOAuthClient.h"
 
 @implementation Tweet (Twitter)
 
-+(Tweet *) tweetWithDetails:(NSDictionary *)tweetDictionary inManagedObjectContext:(NSManagedObjectContext *)context
++(Tweet *) tweetWithDetails:(NSDictionary *)tweetDictionary inHomeTimeline:(NSNumber *)home inManagedObjectContext:(NSManagedObjectContext *)context
 {
     Tweet * tweet = nil;
     
     NSFetchRequest * request = [NSFetchRequest fetchRequestWithEntityName:@"Tweet"];
-    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"time" ascending:YES]];
+    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique" ascending:NO]];
     request.predicate = [NSPredicate predicateWithFormat:@"unique = %@", tweetDictionary[@"id_str"]];
-    
-    // execute fetch
+
     NSError * error = nil;
     NSArray * matches = [context executeFetchRequest:request error:&error];
-    
     if(!matches || ([matches count] > 1)) {
-        //error
+        NSLog(@"Error: Inconsistency in core data!");
     }
     else if(![matches count]) {
         tweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:context];
-        
-        //Add values to attributes of feed here....
         tweet.unique = tweetDictionary[@"id_str"];
         tweet.content = tweetDictionary[@"text"];
         tweet.time = tweetDictionary[@"created_at"];
-        //tweet.createdBy = [tweetDictionary valueForKeyPath:@"user.name"];
-        //feed.thumbnail = [[NSData alloc] initWithContentsOfURL:imageURL];
-        
+        tweet.inHomeTimeline = home;
         NSMutableDictionary * userDictionary = [NSMutableDictionary dictionaryWithObject:[tweetDictionary valueForKeyPath:@"user.name"] forKey:@"name"];
         [userDictionary setObject:[tweetDictionary valueForKeyPath:@"user.screen_name"] forKey:@"screenName"];
         [userDictionary setObject:[tweetDictionary valueForKeyPath:@"user.id_str"] forKey:@"unique"];
+        [userDictionary setObject:[tweetDictionary valueForKeyPath:@"user.followers_count"] forKey:@"followersCount"];
+        [userDictionary setObject:[tweetDictionary valueForKeyPath:@"user.friends_count"] forKey:@"followingCount"];
+        [userDictionary setObject:[tweetDictionary valueForKeyPath:@"user.statuses_count"] forKey:@"tweetsCount"];
+
         NSURL * imageURL = [[NSURL alloc] initWithString:[tweetDictionary valueForKeyPath:@"user.profile_image_url"]];
         [userDictionary setObject:[[NSData alloc] initWithContentsOfURL:imageURL] forKey:@"thumbnail"];
         User * user = [User userWithDetails:userDictionary inManagedContext:context];

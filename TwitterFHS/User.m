@@ -2,7 +2,7 @@
 //  User.m
 //  TwitterFHS
 //
-//  Created by Paresh Shukla on 10/21/13.
+//  Created by Paresh Shukla on 10/25/13.
 //  Copyright (c) 2013 Paresh Shukla. All rights reserved.
 //
 
@@ -17,6 +17,9 @@
 @dynamic screenName;
 @dynamic thumbnail;
 @dynamic unique;
+@dynamic followersCount;
+@dynamic followingCount;
+@dynamic tweetsCount;
 @dynamic follower;
 @dynamic follows;
 @dynamic tweets;
