@@ -12,9 +12,12 @@
 #import "User.h"
 #import "TweetCell.h"
 #import "TwitterOAuthClient.h"
-#import "UseDocument.h"
+#import "ManagedObjectManager.h"
+#import "RootViewController.h"
 
 @interface UserProfileCDTVC ()
+
+@property (weak, nonatomic) RootViewController * rootTabBarController;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 @property (weak, nonatomic) IBOutlet UIImageView *userImage;
 @property (weak, nonatomic) IBOutlet UILabel *screenName;
@@ -36,34 +39,35 @@ static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
     [self.refreshControl addTarget:self
                             action:@selector(refresh)
                   forControlEvents:UIControlEventValueChanged];
-    
+    [self setUpFetchedResultsController];
 }
 
 
 -(void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    if(!self.managedObjectContext)
-        [UseDocument useDocumentWithSuccess:^(UIManagedDocument *document) {
-            self.managedObjectContext = document.managedObjectContext;
-            [self refresh];
-        }];
+    [self refresh];
 }
 
--(void) setManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
+- (RootViewController *)rootTabBarController
 {
-    _managedObjectContext = managedObjectContext;
-    if(managedObjectContext) {
+    return (RootViewController *) self.tabBarController;
+}
+
+- (void)setUpFetchedResultsController
+{
+    if(self.rootTabBarController.mainContext) {
         NSFetchRequest * request = [NSFetchRequest fetchRequestWithEntityName:@"Tweet"];
         request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique" ascending:NO]];
         request.predicate = [NSPredicate predicateWithFormat:@"createdBy.screenName = %@", [TwitterOAuthClient sharedInstance].accessToken.userInfo[@"screen_name"]];
-        self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:managedObjectContext sectionNameKeyPath:nil cacheName:nil];
+        self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:self.rootTabBarController.mainContext sectionNameKeyPath:nil cacheName:nil];
+        [self setLabels];
     }
     else {
         self.fetchedResultsController = nil;
     }
+    
 }
-
 
 -(void) setLabels
 {
@@ -76,6 +80,61 @@ static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
     self.followingCount.text = user.followingCount;
     self.tweetsCount.text = user.tweetsCount;
     self.userImage.image = [[UIImage alloc]initWithData:user.thumbnail];
+}
+
+- (IBAction)refresh
+{
+    [self.refreshControl beginRefreshing];
+    NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObject:[[TwitterOAuthClient sharedInstance].accessToken.userInfo objectForKey:@"screen_name"] forKey:@"screen_name"];
+    dispatch_queue_t feedQ = dispatch_queue_create("Feed Fetch", NULL);
+    dispatch_async(feedQ, ^{
+        [[TwitterOAuthClient sharedInstance] fetchUserTimelineHavingParameters:parameters withSuccess:^(NSMutableArray *results)
+        {
+            [self.rootTabBarController.backgroundContext performBlock:^{
+                for(NSDictionary * tweet in results) {
+                    [Tweet tweetWithDetails:tweet inHomeTimeline:[[NSNumber alloc] initWithBool:NO] inManagedObjectContext:self.rootTabBarController.backgroundContext];
+                }
+                NSError * error = nil;
+                BOOL success = [self.rootTabBarController.backgroundContext save:&error];
+                if(!success) {
+                    NSLog(@"Error saving in core data");
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.refreshControl endRefreshing];
+                });
+            }];
+        }];
+    });
+}
+
+-(void) fetchMoreTweets
+{
+    [self.activityIndicator startAnimating];
+    NSIndexPath *path = [self.tableView indexPathForCell:[[self.tableView visibleCells] lastObject]];
+    Tweet * tweet = [self.fetchedResultsController objectAtIndexPath:path];
+    NSString * maxId = tweet.unique;
+    NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObject:[[TwitterOAuthClient sharedInstance].accessToken.userInfo objectForKey:@"screen_name"] forKey:@"screen_name"];
+    [parameters setObject:maxId forKey:@"max_id"];
+    dispatch_queue_t feedQ = dispatch_queue_create("Feed Fetch", NULL);
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    dispatch_async(feedQ, ^{
+        [[TwitterOAuthClient sharedInstance] fetchUserTimelineHavingParameters:parameters withSuccess:^(NSMutableArray *results) {
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+            [self.rootTabBarController.backgroundContext performBlock:^{
+                for(NSDictionary * tweet in results) {
+                    [Tweet tweetWithDetails:tweet inHomeTimeline:[[NSNumber alloc] initWithBool:NO] inManagedObjectContext:self.rootTabBarController.backgroundContext];
+                }
+                NSError * error = nil;
+                BOOL success = [self.rootTabBarController.backgroundContext save:&error];
+                if(!success) {
+                    NSLog(@"Error saving in core data");
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.activityIndicator stopAnimating];
+                });
+            }];
+        }];
+    });
 }
 
 -(CGFloat) tableView:(UITableView *) tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -126,57 +185,5 @@ static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
         [self fetchMoreTweets];
     }
 }
-
-
-
-
-- (IBAction)refresh
-{
-    [self.refreshControl beginRefreshing];
-    NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObject:[[TwitterOAuthClient sharedInstance].accessToken.userInfo objectForKey:@"screen_name"] forKey:@"screen_name"];
-    dispatch_queue_t feedQ = dispatch_queue_create("Feed Fetch", NULL);
-    dispatch_async(feedQ, ^{
-        [[TwitterOAuthClient sharedInstance] fetchUserTimelineHavingParameters:parameters withSuccess:^(NSMutableArray *results)
-        {
-            [self.managedObjectContext performBlock:^{
-                for(NSDictionary * tweet in results) {
-                    [Tweet tweetWithDetails:tweet inHomeTimeline:[[NSNumber alloc] initWithBool:NO] inManagedObjectContext:self.managedObjectContext];
-                    [self setLabels];
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.refreshControl endRefreshing];
-                });
-            }];
-        }];
-    });
-}
-
--(void) fetchMoreTweets
-{
-    NSIndexPath *path = [self.tableView indexPathForCell:[[self.tableView visibleCells] lastObject]];
-    Tweet * tweet = [self.fetchedResultsController objectAtIndexPath:path];
-    NSString * maxId = tweet.unique;
-    NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObject:[[TwitterOAuthClient sharedInstance].accessToken.userInfo objectForKey:@"screen_name"] forKey:@"screen_name"];
-    [parameters setObject:maxId forKey:@"max_id"];
-    
-    [self.activityIndicator startAnimating];
-    dispatch_queue_t feedQ = dispatch_queue_create("Feed Fetch", NULL);
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    dispatch_async(feedQ, ^{
-        [[TwitterOAuthClient sharedInstance] fetchUserTimelineHavingParameters:parameters withSuccess:^(NSMutableArray *results) {
-            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-            [self.managedObjectContext performBlock:^{
-                for(NSDictionary * tweet in results) {
-                    [Tweet tweetWithDetails:tweet inHomeTimeline:[NSNumber numberWithBool:NO] inManagedObjectContext:self.managedObjectContext];
-                    [self setLabels];
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.activityIndicator stopAnimating];
-                });
-            }];
-        }];
-    });
-}
-
 
 @end

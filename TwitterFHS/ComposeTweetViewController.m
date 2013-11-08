@@ -24,9 +24,9 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)viewDidLoad
+-(void) viewWillAppear:(BOOL)animated
 {
-    [super viewDidLoad];
+    [super viewWillAppear:animated];
     [self.composeTweettTextView becomeFirstResponder];
 }
 

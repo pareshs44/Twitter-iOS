@@ -12,6 +12,7 @@
 #import "User.h"
 #import "TweetCell.h"
 #import "TwitterOAuthClient.h"
+#import "ManagedObjectManager.h"
 
 @interface TweetDetailsCDTVC ()
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
@@ -19,7 +20,6 @@
 @end
 
 @implementation TweetDetailsCDTVC
-static NSString * MAX_ID = @"9999999999999999";
 static CGFloat const IMAGE_HORIZONTAL_PADDING = 20.0f;
 static CGFloat const RIGHT_HORIZONTAL_PADDING = 10.0f;
 static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
@@ -109,21 +109,22 @@ static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
     }
 }
 
-
-
-
 - (IBAction)refresh
 {
     [self.refreshControl beginRefreshing];
     NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObject:[NSString stringWithString:self.createdBy.screenName] forKey:@"screen_name"];
     dispatch_queue_t feedQ = dispatch_queue_create("Feed Fetch", NULL);
     dispatch_async(feedQ, ^{
-        //NSArray * feeds = [client fetchTimeline];
         [[TwitterOAuthClient sharedInstance] fetchUserTimelineHavingParameters:parameters withSuccess:^(NSMutableArray *results)
         {
-            [self.createdBy.managedObjectContext performBlock:^{
+            [[ManagedObjectManager sharedInstance].backgroundContext performBlock:^{
                 for(NSDictionary * tweet in results) {
-                    [Tweet tweetWithDetails:tweet inHomeTimeline:[NSNumber numberWithBool:NO] inManagedObjectContext:self.createdBy.managedObjectContext];
+                    [Tweet tweetWithDetails:tweet inHomeTimeline:[NSNumber numberWithBool:NO] inManagedObjectContext:[ManagedObjectManager sharedInstance].backgroundContext];
+                }
+                NSError * error = nil;
+                BOOL success = [[ManagedObjectManager sharedInstance].backgroundContext save:&error];
+                if(!success) {
+                    NSLog(@"Error saving in core data");
                 }
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.refreshControl endRefreshing];
@@ -147,9 +148,14 @@ static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
     dispatch_async(feedQ, ^{
         [[TwitterOAuthClient sharedInstance] fetchUserTimelineHavingParameters:parameters withSuccess:^(NSMutableArray *results) {
             [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-            [self.createdBy.managedObjectContext performBlock:^{
+            [[ManagedObjectManager sharedInstance].backgroundContext performBlock:^{
                 for(NSDictionary * tweet in results) {
-                    [Tweet tweetWithDetails:tweet inHomeTimeline:[NSNumber numberWithBool:NO] inManagedObjectContext:self.createdBy.managedObjectContext];
+                    [Tweet tweetWithDetails:tweet inHomeTimeline:[NSNumber numberWithBool:NO] inManagedObjectContext:[ManagedObjectManager sharedInstance].backgroundContext];
+                }
+                NSError * error = nil;
+                BOOL success = [[ManagedObjectManager sharedInstance].backgroundContext save:&error];
+                if(!success) {
+                    NSLog(@"Error saving in core data");
                 }
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.activityIndicator stopAnimating];

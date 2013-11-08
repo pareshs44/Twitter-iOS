@@ -12,7 +12,7 @@
         <attribute name="followingCount" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="screenName" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="thumbnail" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="thumbnail" optional="YES" attributeType="Binary" storedInTruthFile="YES" syncable="YES"/>
         <attribute name="tweetsCount" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="unique" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="follower" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="follows" inverseEntity="User" syncable="YES"/>
@@ -20,7 +20,7 @@
         <relationship name="tweets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tweet" inverseName="createdBy" inverseEntity="Tweet" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Tweet" positionX="117" positionY="270" width="128" height="118"/>
-        <element name="User" positionX="412" positionY="117" width="128" height="148"/>
+        <element name="Tweet" positionX="0" positionY="0" width="128" height="120"/>
+        <element name="User" positionX="-227" positionY="0" width="128" height="193"/>
     </elements>
 </model>

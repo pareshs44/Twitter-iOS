@@ -10,6 +10,4 @@
 
 @interface UserProfileCDTVC : CoreDataTableViewController
 
-@property (strong, nonatomic) NSManagedObjectContext * managedObjectContext;
-
 @end

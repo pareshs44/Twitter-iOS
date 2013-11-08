@@ -40,7 +40,8 @@
 		A364F68F17FAE10E0013D586 /* indexBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = A364F68E17FAE10E0013D586 /* indexBackground.png */; };
 		A39908A117ECE67A000C67A2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A39908A017ECE67A000C67A2 /* Security.framework */; };
 		A39908A317ECE687000C67A2 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A39908A217ECE687000C67A2 /* CFNetwork.framework */; };
-		A3E782F3181920AD00581564 /* UseDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = A3E782F2181920AD00581564 /* UseDocument.m */; };
+		A3D38CDD182B80E5006E4A68 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A3D38CDC182B80E5006E4A68 /* RootViewController.m */; };
+		A3E782F3181920AD00581564 /* ManagedObjectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A3E782F2181920AD00581564 /* ManagedObjectManager.m */; };
 		A3ED733D1802892E00C0A2DC /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3ED733C1802892E00C0A2DC /* CoreData.framework */; };
 		A3ED73401802897500C0A2DC /* CoreDataTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A3ED733F1802897400C0A2DC /* CoreDataTableViewController.m */; };
 		A3ED734318028A0700C0A2DC /* TwitterFHS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A3ED734118028A0600C0A2DC /* TwitterFHS.xcdatamodeld */; };
@@ -105,8 +106,10 @@
 		A364F68E17FAE10E0013D586 /* indexBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = indexBackground.png; sourceTree = "<group>"; };
 		A39908A017ECE67A000C67A2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		A39908A217ECE687000C67A2 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		A3E782F1181920AD00581564 /* UseDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UseDocument.h; sourceTree = "<group>"; };
-		A3E782F2181920AD00581564 /* UseDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UseDocument.m; sourceTree = "<group>"; };
+		A3D38CDB182B80E5006E4A68 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
+		A3D38CDC182B80E5006E4A68 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
+		A3E782F1181920AD00581564 /* ManagedObjectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedObjectManager.h; sourceTree = "<group>"; };
+		A3E782F2181920AD00581564 /* ManagedObjectManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedObjectManager.m; sourceTree = "<group>"; };
 		A3ED733C1802892E00C0A2DC /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		A3ED733E1802897400C0A2DC /* CoreDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataTableViewController.h; sourceTree = "<group>"; };
 		A3ED733F1802897400C0A2DC /* CoreDataTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataTableViewController.m; sourceTree = "<group>"; };
@@ -174,8 +177,10 @@
 				A348245C18056CBA0027D43F /* TwitterOAuthClient.m */,
 				A364F68717FADD8B0013D586 /* IndexViewController.h */,
 				A364F68817FADD8B0013D586 /* IndexViewController.m */,
-				A3E782F1181920AD00581564 /* UseDocument.h */,
-				A3E782F2181920AD00581564 /* UseDocument.m */,
+				A3D38CDB182B80E5006E4A68 /* RootViewController.h */,
+				A3D38CDC182B80E5006E4A68 /* RootViewController.m */,
+				A3E782F1181920AD00581564 /* ManagedObjectManager.h */,
+				A3E782F2181920AD00581564 /* ManagedObjectManager.m */,
 				A35B1EEE18125F2700DA9C6A /* HomeTimelineCDTVC.h */,
 				A35B1EEF18125F2700DA9C6A /* HomeTimelineCDTVC.m */,
 				A32CEF2A1814F57100608F35 /* TweetDetailsCDTVC.h */,
@@ -334,12 +339,13 @@
 				A308A31917EC9C43007ED531 /* AppDelegate.m in Sources */,
 				A348249018064E9E0027D43F /* AFHTTPRequestOperation.m in Sources */,
 				A348249418064E9E0027D43F /* AFPropertyListRequestOperation.m in Sources */,
+				A3D38CDD182B80E5006E4A68 /* RootViewController.m in Sources */,
 				A348248F18064E9E0027D43F /* AFHTTPClient.m in Sources */,
 				A364F68917FADD8B0013D586 /* IndexViewController.m in Sources */,
 				A32CEF2F1815253700608F35 /* UserProfileCDTVC.m in Sources */,
 				A361B7B3180E7C0D00D51D5E /* TweetCell.m in Sources */,
 				A3ED73401802897500C0A2DC /* CoreDataTableViewController.m in Sources */,
-				A3E782F3181920AD00581564 /* UseDocument.m in Sources */,
+				A3E782F3181920AD00581564 /* ManagedObjectManager.m in Sources */,
 				A3ED734318028A0700C0A2DC /* TwitterFHS.xcdatamodeld in Sources */,
 				A3ED735F1802A36100C0A2DC /* Tweet+Twitter.m in Sources */,
 				A32CEF2C1814F57100608F35 /* TweetDetailsCDTVC.m in Sources */,

@@ -10,6 +10,4 @@
 
 @interface HomeTimelineCDTVC : CoreDataTableViewController
 
-@property (strong, nonatomic) NSManagedObjectContext * managedObjectContext;
-
 @end

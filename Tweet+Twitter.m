@@ -15,7 +15,6 @@
 +(Tweet *) tweetWithDetails:(NSDictionary *)tweetDictionary inHomeTimeline:(NSNumber *)home inManagedObjectContext:(NSManagedObjectContext *)context
 {
     Tweet * tweet = nil;
-    
     NSFetchRequest * request = [NSFetchRequest fetchRequestWithEntityName:@"Tweet"];
     request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique" ascending:NO]];
     request.predicate = [NSPredicate predicateWithFormat:@"unique = %@", tweetDictionary[@"id_str"]];
@@ -23,7 +22,8 @@
     NSError * error = nil;
     NSArray * matches = [context executeFetchRequest:request error:&error];
     if(!matches || ([matches count] > 1)) {
-        NSLog(@"Error: Inconsistency in core data!");
+        
+        NSLog(@"Error: Inconsistency in tweet core data!");
     }
     else if(![matches count]) {
         tweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:context];
@@ -40,7 +40,7 @@
 
         NSURL * imageURL = [[NSURL alloc] initWithString:[tweetDictionary valueForKeyPath:@"user.profile_image_url"]];
         [userDictionary setObject:[[NSData alloc] initWithContentsOfURL:imageURL] forKey:@"thumbnail"];
-        User * user = [User userWithDetails:userDictionary inManagedContext:context];
+        User * user = [User userWithDetails:[tweetDictionary valueForKey:@"user"] inManagedContext:context];
         tweet.createdBy = user;
     }
     else {
