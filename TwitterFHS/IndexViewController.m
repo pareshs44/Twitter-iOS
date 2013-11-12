@@ -8,10 +8,10 @@
 
 #import "IndexViewController.h"
 #import "ManagedObjectManager.h"
-#import <CoreData/CoreData.h>
-#import "RootViewController.h"
+#import "TwitterOAuthClient.h"
 
 @interface IndexViewController ()
+
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 @end
@@ -24,11 +24,10 @@
 }
 
 - (IBAction)logIn:(id)sender {
-    
     [self.activityIndicator startAnimating];
-    TwitterOAuthToken * storedToken = (TwitterOAuthToken *)[NSKeyedUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults]objectForKey:@"accessToken"]];
+    TwitterOAuthToken *storedToken = (TwitterOAuthToken *)[NSKeyedUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults]objectForKey:@"accessToken"]];
     
-    __weak IndexViewController * weakSelf = self;
+    __weak IndexViewController *weakSelf = self;
     void(^contextCreated)(void) = ^{
         [weakSelf.activityIndicator stopAnimating];
         [weakSelf performSegueWithIdentifier:@"Successful LogIn" sender:weakSelf];
@@ -39,9 +38,11 @@
         [TwitterOAuthClient sharedInstance].accessToken = storedToken;
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
         dispatch_async(logInQ, ^{
-            [[TwitterOAuthClient sharedInstance] verifyUserCredentialsWithSuccess:^(NSMutableArray *results) {
+            [[TwitterOAuthClient sharedInstance]
+             verifyUserCredentialsWithSuccess:^(NSMutableArray *results) {
                 [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-                [[ManagedObjectManager sharedInstance] createContextsWithSuccess:contextCreated];
+                [[ManagedObjectManager sharedInstance]
+                 createContextsWithSuccess:contextCreated];
             }];
         });
     }
@@ -49,20 +50,17 @@
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
         dispatch_queue_t logInQ = dispatch_queue_create("LogIn Queue", NULL);
         dispatch_async(logInQ, ^{
-            [[TwitterOAuthClient sharedInstance] logInToTwitterWithSuccess:^(TwitterOAuthToken *accessToken) {
+            [[TwitterOAuthClient sharedInstance]
+             logInToTwitterWithSuccess:^(TwitterOAuthToken *accessToken) {
                 [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-                [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:accessToken] forKey:@"accessToken"];
-                [[ManagedObjectManager sharedInstance] createContextsWithSuccess:contextCreated];
+                [[NSUserDefaults standardUserDefaults]
+                 setObject:[NSKeyedArchiver archivedDataWithRootObject:accessToken]
+                                                          forKey:@"accessToken"];
+                [[ManagedObjectManager sharedInstance]
+                 createContextsWithSuccess:contextCreated];
             }];
         });
     }
-}
-
--(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    RootViewController * rootTabBarController = (RootViewController *)segue.destinationViewController;
-    rootTabBarController.mainContext = [ManagedObjectManager sharedInstance].mainContext;
-    rootTabBarController.backgroundContext = [ManagedObjectManager sharedInstance].backgroundContext;
 }
 
 @end

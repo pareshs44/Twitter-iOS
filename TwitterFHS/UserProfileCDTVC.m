@@ -7,31 +7,28 @@
 //
 
 #import "UserProfileCDTVC.h"
-#import "Tweet.h"
 #import "Tweet+Twitter.h"
 #import "User.h"
 #import "TweetCell.h"
 #import "TwitterOAuthClient.h"
 #import "ManagedObjectManager.h"
-#import "RootViewController.h"
+#import "SaveResults.h"
 
 @interface UserProfileCDTVC ()
 
-@property (weak, nonatomic) RootViewController * rootTabBarController;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 @property (weak, nonatomic) IBOutlet UIImageView *userImage;
 @property (weak, nonatomic) IBOutlet UILabel *screenName;
 @property (weak, nonatomic) IBOutlet UILabel *followersCount;
 @property (weak, nonatomic) IBOutlet UILabel *followingCount;
 @property (weak, nonatomic) IBOutlet UILabel *tweetsCount;
+@property (strong, nonatomic) NSManagedObjectContext *mainContext;
+@property (strong, nonatomic) TwitterOAuthClient *twitterClient;
+@property (strong, nonatomic) TweetCell *prototypeCell;
 
 @end
 
 @implementation UserProfileCDTVC
-
-static CGFloat const IMAGE_HORIZONTAL_PADDING = 20.0f;
-static CGFloat const RIGHT_HORIZONTAL_PADDING = 10.0f;
-static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
 
 -(void) viewDidLoad
 {
@@ -46,134 +43,120 @@ static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
 -(void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self.activityIndicator stopAnimating];
+    [self.refreshControl beginRefreshing];
     [self refresh];
 }
 
-- (RootViewController *)rootTabBarController
-{
-    return (RootViewController *) self.tabBarController;
+- (NSManagedObjectContext *)mainContext {
+    return [ManagedObjectManager sharedInstance].mainContext;
+}
+
+- (TwitterOAuthClient *)twitterClient {
+    return [TwitterOAuthClient sharedInstance];
+}
+
+- (TweetCell *)prototypeCell {
+    if(!_prototypeCell) {
+        _prototypeCell = [self.tableView dequeueReusableCellWithIdentifier:@"userProfileTweet"];
+    }
+    return _prototypeCell;
 }
 
 - (void)setUpFetchedResultsController
 {
-    if(self.rootTabBarController.mainContext) {
+    if(self.mainContext) {
         NSFetchRequest * request = [NSFetchRequest fetchRequestWithEntityName:@"Tweet"];
-        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique" ascending:NO]];
-        request.predicate = [NSPredicate predicateWithFormat:@"createdBy.screenName = %@", [TwitterOAuthClient sharedInstance].accessToken.userInfo[@"screen_name"]];
-        self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:self.rootTabBarController.mainContext sectionNameKeyPath:nil cacheName:nil];
+        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
+                                                                  ascending:NO]];
+        request.predicate = [NSPredicate predicateWithFormat:@"createdBy.screenName = %@",
+                             self.twitterClient.accessToken.userInfo[@"screen_name"]];
+        self.fetchedResultsController = [[NSFetchedResultsController alloc]
+                                         initWithFetchRequest:request
+                                         managedObjectContext:self.mainContext
+                                         sectionNameKeyPath:nil
+                                         cacheName:nil];
         [self setLabels];
     }
     else {
-        self.fetchedResultsController = nil;
+        NSLog(@"Main Context not set.");
     }
     
 }
 
 -(void) setLabels
 {
-    NSIndexPath * index = [NSIndexPath indexPathForRow:0 inSection:0];
-    Tweet * tweet = [self.fetchedResultsController objectAtIndexPath:index];
-    User * user = tweet.createdBy;
+    NSIndexPath *index = [NSIndexPath indexPathForRow:0 inSection:0];
+    Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:index];
+    User *user = tweet.createdBy;
     self.title = user.name;
     self.screenName.text = user.screenName;
-    self.followersCount.text = user.followersCount;
-    self.followingCount.text = user.followingCount;
-    self.tweetsCount.text = user.tweetsCount;
+    self.followersCount.text = [NSString stringWithFormat:@"%@", user.followersCount];
+    self.followingCount.text = [NSString stringWithFormat:@"%@", user.followingCount];
+    self.tweetsCount.text = [NSString stringWithFormat:@"%@", user.tweetsCount];
     self.userImage.image = [[UIImage alloc]initWithData:user.thumbnail];
 }
 
-- (IBAction)refresh
-{
-    [self.refreshControl beginRefreshing];
-    NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObject:[[TwitterOAuthClient sharedInstance].accessToken.userInfo objectForKey:@"screen_name"] forKey:@"screen_name"];
-    dispatch_queue_t feedQ = dispatch_queue_create("Feed Fetch", NULL);
-    dispatch_async(feedQ, ^{
-        [[TwitterOAuthClient sharedInstance] fetchUserTimelineHavingParameters:parameters withSuccess:^(NSMutableArray *results)
-        {
-            [self.rootTabBarController.backgroundContext performBlock:^{
-                for(NSDictionary * tweet in results) {
-                    [Tweet tweetWithDetails:tweet inHomeTimeline:[[NSNumber alloc] initWithBool:NO] inManagedObjectContext:self.rootTabBarController.backgroundContext];
-                }
-                NSError * error = nil;
-                BOOL success = [self.rootTabBarController.backgroundContext save:&error];
-                if(!success) {
-                    NSLog(@"Error saving in core data");
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.refreshControl endRefreshing];
-                });
-            }];
-        }];
-    });
+- (IBAction)refresh {
+    [self fetchTweetsWithMaxId:nil withSuccess:^{
+        [self.refreshControl endRefreshing];
+    }];
 }
 
--(void) fetchMoreTweets
-{
-    [self.activityIndicator startAnimating];
-    NSIndexPath *path = [self.tableView indexPathForCell:[[self.tableView visibleCells] lastObject]];
-    Tweet * tweet = [self.fetchedResultsController objectAtIndexPath:path];
-    NSString * maxId = tweet.unique;
-    NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObject:[[TwitterOAuthClient sharedInstance].accessToken.userInfo objectForKey:@"screen_name"] forKey:@"screen_name"];
-    [parameters setObject:maxId forKey:@"max_id"];
+- (void)fetchTweetsWithMaxId:maxId withSuccess:(void(^)())success {
+    NSMutableDictionary *parameters = [NSMutableDictionary
+                                       dictionaryWithObject:
+                                       [self.twitterClient.accessToken.userInfo
+                                        objectForKey:@"screen_name"]
+                                       forKey:@"screen_name"];
+    if(maxId) {
+        [parameters setObject:maxId forKey:@"max_id"];
+    }
     dispatch_queue_t feedQ = dispatch_queue_create("Feed Fetch", NULL);
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     dispatch_async(feedQ, ^{
-        [[TwitterOAuthClient sharedInstance] fetchUserTimelineHavingParameters:parameters withSuccess:^(NSMutableArray *results) {
+        [self.twitterClient fetchUserTimelineHavingParameters:parameters
+                                                  withSuccess:^(NSMutableArray *results) {
             [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-            [self.rootTabBarController.backgroundContext performBlock:^{
-                for(NSDictionary * tweet in results) {
-                    [Tweet tweetWithDetails:tweet inHomeTimeline:[[NSNumber alloc] initWithBool:NO] inManagedObjectContext:self.rootTabBarController.backgroundContext];
-                }
-                NSError * error = nil;
-                BOOL success = [self.rootTabBarController.backgroundContext save:&error];
-                if(!success) {
-                    NSLog(@"Error saving in core data");
-                }
+            SaveResults *saveResults = [[SaveResults alloc] init];
+            [saveResults saveInBackgroundContextTweets:results
+                                        inHomeTimeline:@NO
+                                           withSuccess:^{
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.activityIndicator stopAnimating];
+                    success();
                 });
             }];
         }];
     });
 }
 
--(CGFloat) tableView:(UITableView *) tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    TweetCell * cell = [tableView dequeueReusableCellWithIdentifier:@"userTweet"];
-    Tweet * tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    
-    cell.contentLabel.text = tweet.content;
-    cell.creatorLabel.text = tweet.createdBy.name;
-    UIImage * image = [[UIImage alloc] initWithData:tweet.createdBy.thumbnail];
-    cell.thumbnailImageView.image = image;
-    
-    CGFloat imageWidth = image.size.width;
-    cell.contentLabel.preferredMaxLayoutWidth = cell.contentLabel.superview.bounds.size.width - (imageWidth + IMAGE_HORIZONTAL_PADDING + LABEL_HORIZONTAL_PADDING + RIGHT_HORIZONTAL_PADDING);
-    [cell.contentView setNeedsLayout];
-    [cell.contentView layoutIfNeeded];
-    CGFloat height = [cell.contentView systemLayoutSizeFittingSize:UILayoutFittingExpandedSize].height;
-    return height;
+- (CGFloat)tableView:(UITableView *)tableView
+heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    return [self.prototypeCell tweetCellHeightForData:tweet];
 }
 
-- (CGFloat) tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return 60.0f;
+- (CGFloat)tableView:(UITableView *)tableView
+estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return FIXED_HEIGHT;
 }
 
--(TweetCell *) tableView:(UITableView *) tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    TweetCell * cell = [tableView dequeueReusableCellWithIdentifier:@"userTweet"];
-    Tweet * tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
+- (TweetCell *)tableView:(UITableView *)tableView
+   cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    TweetCell *cell = [tableView dequeueReusableCellWithIdentifier:@"userProfileTweet"];
+    Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
     cell.contentLabel.text = tweet.content;
     cell.creatorLabel.text = tweet.createdBy.name;
-    cell.timeLabel.text = [[tweet.time substringFromIndex:4] substringToIndex:12];
-    UIImage * image = [[UIImage alloc] initWithData:tweet.createdBy.thumbnail];
+    NSDateFormatter *displayDateFormat = [[NSDateFormatter alloc] init];
+    [displayDateFormat setDateFormat:@"MMM dd HH:mm"];
+    cell.timeLabel.text = [displayDateFormat stringFromDate:tweet.time];
+    UIImage *image = [[UIImage alloc] initWithData:tweet.createdBy.thumbnail];
     cell.thumbnailImageView.image = image;
     return cell;
 }
 
--(void) scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-{
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView
+                  willDecelerate:(BOOL)decelerate {
     CGPoint offset = scrollView.contentOffset;
     CGRect bounds = scrollView.bounds;
     CGSize size = scrollView.contentSize;
@@ -181,8 +164,17 @@ static CGFloat const LABEL_HORIZONTAL_PADDING = 8.0f;
     float y = offset.y + bounds.size.height - inset.bottom;
     float h = size.height;
     float reload_distance = 2;
-    if(y > h + reload_distance) {
-        [self fetchMoreTweets];
+    __block BOOL isFetching = FALSE;
+    if((y > h + reload_distance) && !isFetching) {
+        isFetching = !isFetching;
+        NSIndexPath *path = [self.tableView indexPathForCell:[[self.tableView visibleCells] lastObject]];
+        Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:path];
+        NSString *maxId = tweet.unique;
+        [self.activityIndicator startAnimating];
+        [self fetchTweetsWithMaxId:maxId withSuccess:^{
+            isFetching = !isFetching;
+            [self.activityIndicator stopAnimating];
+        }];
     }
 }
 

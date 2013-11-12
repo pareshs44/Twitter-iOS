@@ -427,7 +427,7 @@ static NSString * const AUTHORIZATION_PATH = @"/oauth/authorize";
 }
 
 
--(void) fetchHomeTimelineHavingParameters:(NSMutableDictionary *)parameters WithSuccess:(void(^)(NSMutableArray * results))success
+-(void) fetchHomeTimelineHavingParameters:(NSMutableDictionary *)parameters withSuccess:(void(^)(NSMutableArray * results))success
 {
     NSString * homeTimelineURL = @"statuses/home_timeline.json";
     NSMutableURLRequest * request = [self requestWithMethod:@"GET" path:homeTimelineURL parameters:parameters];

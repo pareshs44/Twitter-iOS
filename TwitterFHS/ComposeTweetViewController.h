@@ -10,7 +10,5 @@
 #import "TwitterOAuthClient.h"
 
 @interface ComposeTweetViewController : UIViewController
-@property (weak, nonatomic) IBOutlet UITextView *composeTweettTextView;
-@property (strong, nonatomic) TwitterOAuthClient * twitterOAuthClient;
 
 @end

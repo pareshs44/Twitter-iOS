@@ -18,7 +18,7 @@
 +(TwitterOAuthClient *) sharedInstance;
 -(void) logInToTwitterWithSuccess:(void (^)(TwitterOAuthToken * accessToken))success;
 -(void) verifyUserCredentialsWithSuccess:(void(^)(NSMutableArray * results))success;
--(void) fetchHomeTimelineHavingParameters:(NSMutableDictionary *)parameters WithSuccess:(void(^)(NSMutableArray * results))success;
+-(void) fetchHomeTimelineHavingParameters:(NSMutableDictionary *)parameters withSuccess:(void(^)(NSMutableArray * results))success;
 -(void) fetchUserTimelineHavingParameters:(NSMutableDictionary *)parameters withSuccess:(void(^)(NSMutableArray * results))success;
 -(void) postTweetWithParameters:(NSMutableDictionary *) parameters;
 

@@ -2,7 +2,7 @@
 //  Tweet.m
 //  TwitterFHS
 //
-//  Created by Paresh Shukla on 10/25/13.
+//  Created by Paresh Shukla on 11/12/13.
 //  Copyright (c) 2013 Paresh Shukla. All rights reserved.
 //
 
@@ -13,9 +13,9 @@
 @implementation Tweet
 
 @dynamic content;
+@dynamic inHomeTimeline;
 @dynamic time;
 @dynamic unique;
-@dynamic inHomeTimeline;
 @dynamic createdBy;
 
 @end

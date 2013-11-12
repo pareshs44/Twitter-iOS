@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TwitterOAuthClient.h"
 
 @interface IndexViewController : UIViewController
 

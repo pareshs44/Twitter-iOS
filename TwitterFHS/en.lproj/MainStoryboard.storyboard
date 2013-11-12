@@ -18,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="indexBackground.png" translatesAutoresizingMaskIntoConstraints="NO" id="BUO-xb-ruS">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="indexBackground.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="BUO-xb-ruS">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
@@ -33,7 +33,7 @@
                                 </connections>
                             </button>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="hZ1-OP-ZHL">
-                                <rect key="frame" x="150" y="274" width="20" height="20"/>
+                                <rect key="frame" x="242" y="520" width="20" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </activityIndicatorView>
                         </subviews>
@@ -148,7 +148,7 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </activityIndicatorView>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userTweet" rowHeight="81" id="c6A-H5-mUl" customClass="TweetCell">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userProfileTweet" rowHeight="81" id="c6A-H5-mUl" customClass="TweetCell">
                                 <rect key="frame" x="0.0" y="183" width="320" height="81"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="c6A-H5-mUl" id="174-uB-3t1">
@@ -451,10 +451,10 @@
             </objects>
             <point key="canvasLocation" x="-647" y="348"/>
         </scene>
-        <!--Root View Controller-->
+        <!--Tab Bar Controller-->
         <scene sceneID="oQe-kE-INb">
             <objects>
-                <tabBarController storyboardIdentifier="HomeViewController" id="PZb-kC-Tdt" customClass="RootViewController" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="HomeViewController" id="PZb-kC-Tdt" sceneMemberID="viewController">
                     <toolbarItems/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="Fck-cp-FHh">
@@ -482,7 +482,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" restorationIdentifier="composeTweettTextView" translatesAutoresizingMaskIntoConstraints="NO" id="1AK-vc-Nbm">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" restorationIdentifier="composeTweetTextView" translatesAutoresizingMaskIntoConstraints="NO" id="1AK-vc-Nbm">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="251"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -522,7 +522,7 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="characters" destination="q0c-WO-7rV" id="LMn-Yr-bMl"/>
-                        <outlet property="composeTweettTextView" destination="1AK-vc-Nbm" id="PIS-Gk-91A"/>
+                        <outlet property="composeTweetTextView" destination="1AK-vc-Nbm" id="ZNk-v5-u9u"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="f0C-o7-NvU" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -531,7 +531,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="indexBackground.png" width="183" height="275"/>
+        <image name="indexBackground.jpg" width="183" height="275"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

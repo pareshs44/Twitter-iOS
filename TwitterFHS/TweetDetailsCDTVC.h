@@ -7,7 +7,7 @@
 //
 
 #import "CoreDataTableViewController.h"
-#import "Tweet.h"
+@class User;
 
 @interface TweetDetailsCDTVC : CoreDataTableViewController
 

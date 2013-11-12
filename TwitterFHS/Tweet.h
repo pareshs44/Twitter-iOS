@@ -2,7 +2,7 @@
 //  Tweet.h
 //  TwitterFHS
 //
-//  Created by Paresh Shukla on 10/25/13.
+//  Created by Paresh Shukla on 11/12/13.
 //  Copyright (c) 2013 Paresh Shukla. All rights reserved.
 //
 
@@ -14,9 +14,9 @@
 @interface Tweet : NSManagedObject
 
 @property (nonatomic, retain) NSString * content;
-@property (nonatomic, retain) NSString * time;
-@property (nonatomic, retain) NSString * unique;
 @property (nonatomic, retain) NSNumber * inHomeTimeline;
+@property (nonatomic, retain) NSDate * time;
+@property (nonatomic, retain) NSString * unique;
 @property (nonatomic, retain) User *createdBy;
 
 @end

@@ -10,9 +10,9 @@
 
 @interface ManagedObjectManager : NSObject
 
-@property (strong, nonatomic) NSManagedObjectContext * mainContext;
-@property (strong, nonatomic) NSManagedObjectContext * backgroundContext;
-+(ManagedObjectManager *) sharedInstance;
--(void) createContextsWithSuccess:(void (^)())success;
+@property (strong, nonatomic, readonly) NSManagedObjectContext *mainContext;
+@property (strong, nonatomic, readonly) NSManagedObjectContext *backgroundContext;
++ (ManagedObjectManager *)sharedInstance;
+- (void)createContextsWithSuccess:(void (^)())success;
 
 @end
