@@ -134,7 +134,7 @@ estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     float y = offset.y + bounds.size.height - inset.bottom;
     float h = size.height;
     float reload_distance = 2;
-    __block BOOL isFetching = NO;
+    __block BOOL isFetching = FALSE;
     if((y > h + reload_distance) && !isFetching) {
         isFetching = !isFetching;
         NSIndexPath *path = [self.tableView indexPathForCell:[[self.tableView visibleCells] lastObject]];

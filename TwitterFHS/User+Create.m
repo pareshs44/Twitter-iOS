@@ -23,7 +23,7 @@
         NSError *error;
         NSArray *matches = [context executeFetchRequest:request error:&error];
         
-        NSAssert((!matches || ([matches count] > 1)), @"Error: Inconsistency in tweet core data! Can't return null for match or more than one match.");
+        NSAssert((matches && ([matches count] <= 1)), @"Error: Inconsistency in tweet core data! Can't return null for match or more than one match.");
         if(![matches count]) {
             user = [NSEntityDescription insertNewObjectForEntityForName:@"User"
                                                  inManagedObjectContext:context];

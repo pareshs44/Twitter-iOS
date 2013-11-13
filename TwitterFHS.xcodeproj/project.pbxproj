@@ -283,6 +283,7 @@
 		A308A2FD17EC9C43007ED531 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = TM;
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "Paresh Shukla";
 				TargetAttributes = {

@@ -132,7 +132,7 @@ estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     float y = offset.y + bounds.size.height - inset.bottom;
     float h = size.height;
     float reload_distance = 2;
-    __block BOOL isFetching = NO;
+    __block BOOL isFetching = FALSE;
     if((y > h + reload_distance) && !isFetching) {
         isFetching = !isFetching;
         NSIndexPath *path = [self.tableView indexPathForCell:[[self.tableView visibleCells] lastObject]];
@@ -148,15 +148,16 @@ estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     NSIndexPath * indexPath = nil;
-    NSAssert([sender isKindOfClass:[UITableViewCell class]], @"Can not segue from any sender other than table view cell.");
+    NSAssert([sender isKindOfClass:[UITableViewCell class]],
+             @"Can not segue from any sender other than table view cell.");
     indexPath = [self.tableView indexPathForCell:sender];
     NSAssert(indexPath, @"Can not segue from an indexPath having a nil value.");
-        if([segue.identifier isEqualToString:@"tweetDetails"]) {
-            Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
-            User *createdBy = tweet.createdBy;
-            [segue.destinationViewController
-             performSelector:@selector(setCreatedBy:) withObject:createdBy];
-        }
+    if([segue.identifier isEqualToString:@"tweetDetails"]) {
+        Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
+        User *createdBy = tweet.createdBy;
+        [segue.destinationViewController
+         performSelector:@selector(setCreatedBy:) withObject:createdBy];
+    }
 }
 
 @end

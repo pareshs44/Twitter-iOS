@@ -16,6 +16,7 @@
              inHomeTimeline:(NSNumber *)home
      inManagedObjectContext:(NSManagedObjectContext *)context {
     Tweet *tweet = nil;
+    
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Tweet"];
     request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
                                                               ascending:NO]];
@@ -24,7 +25,7 @@
     
     NSError *error = nil;
     NSArray *matches = [context executeFetchRequest:request error:&error];
-    NSAssert((!matches || ([matches count] > 1)), @"Error: Inconsistency in tweet core data! Can't return null for match or more than one match.");
+    NSAssert((matches && ([matches count] <= 1)), @"Error: Inconsistency in tweet core data! Can't return null for match or more than one match.");
     if(![matches count]) {
         tweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet"
                                               inManagedObjectContext:context];
