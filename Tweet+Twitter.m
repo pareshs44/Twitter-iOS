@@ -24,10 +24,8 @@
     
     NSError *error = nil;
     NSArray *matches = [context executeFetchRequest:request error:&error];
-    if(!matches || ([matches count] > 1)) {
-        NSLog(@"Error: Inconsistency in tweet core data!");
-    }
-    else if(![matches count]) {
+    NSAssert((!matches || ([matches count] > 1)), @"Error: Inconsistency in tweet core data! Can't return null for match or more than one match.");
+    if(![matches count]) {
         tweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet"
                                               inManagedObjectContext:context];
         tweet.unique = tweetDictionary[@"id_str"];
@@ -42,6 +40,7 @@
     }
     else {
         tweet = [matches lastObject];
+        tweet.inHomeTimeline = home;
     }
     return tweet;
 }

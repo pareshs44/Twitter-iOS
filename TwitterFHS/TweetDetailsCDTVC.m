@@ -16,7 +16,7 @@
 
 @interface TweetDetailsCDTVC ()
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
-@property (strong, nonatomic) TwitterOAuthClient *twitterClient;
+@property (weak, nonatomic) TwitterOAuthClient *twitterClient;
 @property (strong, nonatomic) TweetCell *prototypeCell;
 
 @end
@@ -56,20 +56,16 @@
 }
 
 - (void)setupFetchedResultsController {
-    if(self.createdBy.managedObjectContext) {
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Tweet"];
-        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
-                                                                  ascending:NO]];
-        request.predicate = [NSPredicate predicateWithFormat:@"createdBy = %@", self.createdBy];
-        self.fetchedResultsController = [[NSFetchedResultsController alloc]
-                                         initWithFetchRequest:request
-                                         managedObjectContext:self.createdBy.managedObjectContext
-                                         sectionNameKeyPath:nil
-                                         cacheName:nil];
-    }
-    else {
-        NSLog(@"Main Context not set.");
-    }
+    NSAssert(self.createdBy.managedObjectContext, @"Main Context not set.");
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Tweet"];
+    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
+                                                              ascending:NO]];
+    request.predicate = [NSPredicate predicateWithFormat:@"createdBy = %@", self.createdBy];
+    self.fetchedResultsController = [[NSFetchedResultsController alloc]
+                                     initWithFetchRequest:request
+                                     managedObjectContext:self.createdBy.managedObjectContext
+                                     sectionNameKeyPath:nil
+                                     cacheName:nil];
 }
 
 - (IBAction)refresh {
@@ -138,7 +134,7 @@ estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     float y = offset.y + bounds.size.height - inset.bottom;
     float h = size.height;
     float reload_distance = 2;
-    __block BOOL isFetching = FALSE;
+    __block BOOL isFetching = NO;
     if((y > h + reload_distance) && !isFetching) {
         isFetching = !isFetching;
         NSIndexPath *path = [self.tableView indexPathForCell:[[self.tableView visibleCells] lastObject]];

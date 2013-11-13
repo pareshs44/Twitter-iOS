@@ -17,8 +17,8 @@
 @interface HomeTimelineCDTVC ()
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
-@property (strong, nonatomic) NSManagedObjectContext *mainContext;
-@property (strong, nonatomic) TwitterOAuthClient *twitterClient;
+@property (weak, nonatomic) NSManagedObjectContext *mainContext;
+@property (weak, nonatomic) TwitterOAuthClient *twitterClient;
 @property (strong, nonatomic) TweetCell *prototypeCell;
 
 @end
@@ -35,7 +35,6 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.activityIndicator stopAnimating];
     [self.refreshControl beginRefreshing];
     [self refresh];
 }
@@ -56,21 +55,16 @@
 }
 
 - (void)setUpFetchedResultsController {
-    if(self.mainContext) {
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Tweet"];
-        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
-                                                                  ascending:NO]];
-        request.predicate = [NSPredicate predicateWithFormat:@"inHomeTimeline = %@", @YES];
-        self.fetchedResultsController = [[NSFetchedResultsController alloc]
-                                         initWithFetchRequest:request
-                                         managedObjectContext:self.mainContext
-                                         sectionNameKeyPath:nil
-                                         cacheName:nil];
-    }
-    else {
-        NSLog(@"Main Context not set.");
-    }
-
+    NSAssert(self.mainContext, @"Main Context not set.");
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Tweet"];
+    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
+                                                                ascending:NO]];
+    request.predicate = [NSPredicate predicateWithFormat:@"inHomeTimeline = %@", @YES];
+    self.fetchedResultsController = [[NSFetchedResultsController alloc]
+                                        initWithFetchRequest:request
+                                        managedObjectContext:self.mainContext
+                                        sectionNameKeyPath:nil
+                                        cacheName:nil];
 }
 
 - (IBAction)refresh {
@@ -138,7 +132,7 @@ estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     float y = offset.y + bounds.size.height - inset.bottom;
     float h = size.height;
     float reload_distance = 2;
-    __block BOOL isFetching = FALSE;
+    __block BOOL isFetching = NO;
     if((y > h + reload_distance) && !isFetching) {
         isFetching = !isFetching;
         NSIndexPath *path = [self.tableView indexPathForCell:[[self.tableView visibleCells] lastObject]];
@@ -154,17 +148,15 @@ estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     NSIndexPath * indexPath = nil;
-    if([sender isKindOfClass:[UITableViewCell class]]) {
-        indexPath = [self.tableView indexPathForCell:sender];
-    }
-    if(indexPath) {
+    NSAssert([sender isKindOfClass:[UITableViewCell class]], @"Can not segue from any sender other than table view cell.");
+    indexPath = [self.tableView indexPathForCell:sender];
+    NSAssert(indexPath, @"Can not segue from an indexPath having a nil value.");
         if([segue.identifier isEqualToString:@"tweetDetails"]) {
             Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
             User *createdBy = tweet.createdBy;
             [segue.destinationViewController
              performSelector:@selector(setCreatedBy:) withObject:createdBy];
         }
-    }
 }
 
 @end

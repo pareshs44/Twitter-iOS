@@ -22,8 +22,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *followersCount;
 @property (weak, nonatomic) IBOutlet UILabel *followingCount;
 @property (weak, nonatomic) IBOutlet UILabel *tweetsCount;
-@property (strong, nonatomic) NSManagedObjectContext *mainContext;
-@property (strong, nonatomic) TwitterOAuthClient *twitterClient;
+@property (weak, nonatomic) NSManagedObjectContext *mainContext;
+@property (weak, nonatomic) TwitterOAuthClient *twitterClient;
 @property (strong, nonatomic) TweetCell *prototypeCell;
 
 @end
@@ -65,23 +65,18 @@
 
 - (void)setUpFetchedResultsController
 {
-    if(self.mainContext) {
-        NSFetchRequest * request = [NSFetchRequest fetchRequestWithEntityName:@"Tweet"];
-        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
-                                                                  ascending:NO]];
-        request.predicate = [NSPredicate predicateWithFormat:@"createdBy.screenName = %@",
-                             self.twitterClient.accessToken.userInfo[@"screen_name"]];
-        self.fetchedResultsController = [[NSFetchedResultsController alloc]
-                                         initWithFetchRequest:request
-                                         managedObjectContext:self.mainContext
-                                         sectionNameKeyPath:nil
-                                         cacheName:nil];
-        [self setLabels];
-    }
-    else {
-        NSLog(@"Main Context not set.");
-    }
-    
+    NSAssert(self.mainContext, @"Main Context not set.");
+    NSFetchRequest * request = [NSFetchRequest fetchRequestWithEntityName:@"Tweet"];
+    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
+                                                              ascending:NO]];
+    request.predicate = [NSPredicate predicateWithFormat:@"createdBy.screenName = %@",
+                         self.twitterClient.accessToken.userInfo[@"screen_name"]];
+    self.fetchedResultsController = [[NSFetchedResultsController alloc]
+                                     initWithFetchRequest:request
+                                     managedObjectContext:self.mainContext
+                                     sectionNameKeyPath:nil
+                                     cacheName:nil];
+    [self setLabels];
 }
 
 -(void) setLabels
