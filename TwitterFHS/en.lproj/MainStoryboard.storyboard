@@ -67,7 +67,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="hT7-xe-Obm">
-                            <rect key="frame" x="0.0" y="0.0" width="320" height="97"/>
+                            <rect key="frame" x="0.0" y="64" width="320" height="97"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="505" verticalHuggingPriority="511" verticalCompressionResistancePriority="749" placeholderIntrinsicWidth="40" placeholderIntrinsicHeight="46" translatesAutoresizingMaskIntoConstraints="NO" id="utp-J9-5xJ">
@@ -143,13 +143,9 @@
                                 <constraint firstItem="utp-J9-5xJ" firstAttribute="top" secondItem="hT7-xe-Obm" secondAttribute="top" constant="10" id="wIb-ey-cAM"/>
                             </constraints>
                         </view>
-                        <activityIndicatorView key="tableFooterView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" id="PoW-fK-2Cd">
-                            <rect key="frame" x="0.0" y="200" width="320" height="20"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        </activityIndicatorView>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userProfileTweet" rowHeight="81" id="c6A-H5-mUl" customClass="TweetCell">
-                                <rect key="frame" x="0.0" y="119" width="320" height="81"/>
+                                <rect key="frame" x="0.0" y="183" width="320" height="81"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="c6A-H5-mUl" id="174-uB-3t1">
                                     <rect key="frame" x="0.0" y="0.0" width="287" height="80"/>
@@ -219,7 +215,6 @@
                         <attributedString key="attributedTitle"/>
                     </refreshControl>
                     <connections>
-                        <outlet property="activityIndicator" destination="PoW-fK-2Cd" id="kXa-Y8-EEC"/>
                         <outlet property="followersCount" destination="f49-uO-VPq" id="bMa-fK-SYP"/>
                         <outlet property="followingCount" destination="CPj-r1-M9R" id="pap-bx-gDX"/>
                         <outlet property="screenName" destination="aQM-D2-2DT" id="9O9-do-91E"/>
@@ -239,13 +234,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <activityIndicatorView key="tableFooterView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" id="nFW-H6-569">
-                            <rect key="frame" x="0.0" y="103" width="320" height="20"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        </activityIndicatorView>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="tweet" rowHeight="81" id="7bb-ef-rSC" customClass="TweetCell">
-                                <rect key="frame" x="0.0" y="22" width="320" height="81"/>
+                                <rect key="frame" x="0.0" y="86" width="320" height="81"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="7bb-ef-rSC" id="gE4-rU-nnM">
                                     <rect key="frame" x="0.0" y="0.0" width="287" height="80"/>
@@ -314,13 +305,10 @@
                     <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="uLz-hS-vvf">
                         <autoresizingMask key="autoresizingMask"/>
                     </refreshControl>
-                    <connections>
-                        <outlet property="activityIndicator" destination="nFW-H6-569" id="GQw-zf-PE5"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BKg-yl-Trp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-208" y="-315"/>
+            <point key="canvasLocation" x="-177" y="-315"/>
         </scene>
         <!--Tweet DetailsCDTVC-->
         <scene sceneID="r2h-wU-VeN">
@@ -330,13 +318,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <activityIndicatorView key="tableFooterView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" id="gpb-r4-CyY">
-                            <rect key="frame" x="0.0" y="103" width="320" height="20"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        </activityIndicatorView>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userTweet" rowHeight="81" id="RA7-Ec-Xh0" customClass="TweetCell">
-                                <rect key="frame" x="0.0" y="22" width="320" height="81"/>
+                                <rect key="frame" x="0.0" y="86" width="320" height="81"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RA7-Ec-Xh0" id="tet-mG-iOU">
                                     <rect key="frame" x="0.0" y="0.0" width="287" height="80"/>
@@ -405,9 +389,6 @@
                     <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="RyL-eT-jNf">
                         <autoresizingMask key="autoresizingMask"/>
                     </refreshControl>
-                    <connections>
-                        <outlet property="activityIndicator" destination="gpb-r4-CyY" id="eaj-eA-zPK"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WmD-Tt-EhK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

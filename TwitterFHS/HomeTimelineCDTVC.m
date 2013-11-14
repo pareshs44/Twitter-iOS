@@ -16,7 +16,7 @@
 
 @interface HomeTimelineCDTVC ()
 
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
 @property (weak, nonatomic) NSManagedObjectContext *mainContext;
 @property (weak, nonatomic) TwitterOAuthClient *twitterClient;
 @property (strong, nonatomic) TweetCell *prototypeCell;
@@ -34,6 +34,14 @@
     [self.refreshControl addTarget:self
                             action:@selector(refresh)
                   forControlEvents:UIControlEventValueChanged];
+    self.activityIndicator = [[UIActivityIndicatorView alloc]
+                              initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    UIBarButtonItem *activityIndicatorItem = [[UIBarButtonItem alloc]
+                                              initWithCustomView:self.activityIndicator];
+    NSMutableArray *rightBarButtonItems = [self.navigationItem.rightBarButtonItems
+                                           mutableCopy];
+    [rightBarButtonItems addObject:activityIndicatorItem];
+    self.navigationItem.rightBarButtonItems = rightBarButtonItems;
     [self setUpFetchedResultsController];
 }
 

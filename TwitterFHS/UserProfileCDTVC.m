@@ -16,7 +16,7 @@
 
 @interface UserProfileCDTVC ()
 
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
 @property (weak, nonatomic) IBOutlet UIImageView *userImage;
 @property (weak, nonatomic) IBOutlet UILabel *screenName;
 @property (weak, nonatomic) IBOutlet UILabel *followersCount;
@@ -37,6 +37,14 @@
     [self.refreshControl addTarget:self
                             action:@selector(refresh)
                   forControlEvents:UIControlEventValueChanged];
+    self.activityIndicator = [[UIActivityIndicatorView alloc]
+                              initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    UIBarButtonItem *activityIndicatorItem = [[UIBarButtonItem alloc]
+                                              initWithCustomView:self.activityIndicator];
+    NSMutableArray *rightBarButtonItems = [self.navigationItem.rightBarButtonItems
+                                           mutableCopy];
+    [rightBarButtonItems addObject:activityIndicatorItem];
+    self.navigationItem.rightBarButtonItems = rightBarButtonItems;
     [self setUpFetchedResultsController];
 }
 
