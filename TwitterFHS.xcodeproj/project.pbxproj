@@ -34,14 +34,15 @@
 		A348249718064E9E0027D43F /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = A348248E18064E9E0027D43F /* UIImageView+AFNetworking.m */; };
 		A348249A180D897D0027D43F /* ComposeTweetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A3482499180D897D0027D43F /* ComposeTweetViewController.m */; };
 		A3551C3D182D117E0055B35D /* SaveResults.m in Sources */ = {isa = PBXBuildFile; fileRef = A3551C3C182D117E0055B35D /* SaveResults.m */; };
-		A357A01018323A57001C87B6 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = A357A00F18323A57001C87B6 /* User.m */; };
-		A357A01318323A58001C87B6 /* Tweet.m in Sources */ = {isa = PBXBuildFile; fileRef = A357A01218323A58001C87B6 /* Tweet.m */; };
 		A35B1EF018125F2700DA9C6A /* HomeTimelineCDTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A35B1EEF18125F2700DA9C6A /* HomeTimelineCDTVC.m */; };
 		A361B7B3180E7C0D00D51D5E /* TweetCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A361B7B2180E7C0D00D51D5E /* TweetCell.m */; };
 		A364F68917FADD8B0013D586 /* IndexViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A364F68817FADD8B0013D586 /* IndexViewController.m */; };
 		A37DE120182CF9A40056C4F3 /* indexBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A37DE11F182CF9A40056C4F3 /* indexBackground.jpg */; };
 		A39908A117ECE67A000C67A2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A39908A017ECE67A000C67A2 /* Security.framework */; };
 		A39908A317ECE687000C67A2 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A39908A217ECE687000C67A2 /* CFNetwork.framework */; };
+		A3AF31B71834B93500890368 /* Tweet.m in Sources */ = {isa = PBXBuildFile; fileRef = A3AF31B61834B93500890368 /* Tweet.m */; };
+		A3AF31BA1834B93600890368 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = A3AF31B91834B93600890368 /* User.m */; };
+		A3AF31BC1834DED100890368 /* default_profile_image.png in Resources */ = {isa = PBXBuildFile; fileRef = A3AF31BB1834DED100890368 /* default_profile_image.png */; };
 		A3E782F3181920AD00581564 /* ManagedObjectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A3E782F2181920AD00581564 /* ManagedObjectManager.m */; };
 		A3ED733D1802892E00C0A2DC /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3ED733C1802892E00C0A2DC /* CoreData.framework */; };
 		A3ED734318028A0700C0A2DC /* TwitterFHS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A3ED734118028A0600C0A2DC /* TwitterFHS.xcdatamodeld */; };
@@ -97,10 +98,6 @@
 		A3482499180D897D0027D43F /* ComposeTweetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComposeTweetViewController.m; sourceTree = "<group>"; };
 		A3551C3B182D117E0055B35D /* SaveResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveResults.h; sourceTree = "<group>"; };
 		A3551C3C182D117E0055B35D /* SaveResults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SaveResults.m; sourceTree = "<group>"; };
-		A357A00E18323A57001C87B6 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
-		A357A00F18323A57001C87B6 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
-		A357A01118323A58001C87B6 /* Tweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweet.h; sourceTree = "<group>"; };
-		A357A01218323A58001C87B6 /* Tweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tweet.m; sourceTree = "<group>"; };
 		A35B1EEE18125F2700DA9C6A /* HomeTimelineCDTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeTimelineCDTVC.h; sourceTree = "<group>"; };
 		A35B1EEF18125F2700DA9C6A /* HomeTimelineCDTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeTimelineCDTVC.m; sourceTree = "<group>"; };
 		A361B7B1180E7C0D00D51D5E /* TweetCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TweetCell.h; sourceTree = "<group>"; };
@@ -110,6 +107,11 @@
 		A37DE11F182CF9A40056C4F3 /* indexBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = indexBackground.jpg; sourceTree = "<group>"; };
 		A39908A017ECE67A000C67A2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		A39908A217ECE687000C67A2 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		A3AF31B51834B93500890368 /* Tweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweet.h; sourceTree = "<group>"; };
+		A3AF31B61834B93500890368 /* Tweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tweet.m; sourceTree = "<group>"; };
+		A3AF31B81834B93600890368 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		A3AF31B91834B93600890368 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		A3AF31BB1834DED100890368 /* default_profile_image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = default_profile_image.png; sourceTree = "<group>"; };
 		A3E782F1181920AD00581564 /* ManagedObjectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedObjectManager.h; sourceTree = "<group>"; };
 		A3E782F2181920AD00581564 /* ManagedObjectManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedObjectManager.m; sourceTree = "<group>"; };
 		A3ED733C1802892E00C0A2DC /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -199,6 +201,7 @@
 		A308A30F17EC9C43007ED531 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A3AF31BB1834DED100890368 /* default_profile_image.png */,
 				A37DE11F182CF9A40056C4F3 /* indexBackground.jpg */,
 				A308A31717EC9C43007ED531 /* AppDelegate.h */,
 				A308A31817EC9C43007ED531 /* AppDelegate.m */,
@@ -249,10 +252,10 @@
 				A31FD66A18329A5B008A325D /* CoreDataTableViewController.h */,
 				A31FD66B18329A5B008A325D /* CoreDataTableViewController.m */,
 				A3ED734118028A0600C0A2DC /* TwitterFHS.xcdatamodeld */,
-				A357A00E18323A57001C87B6 /* User.h */,
-				A357A00F18323A57001C87B6 /* User.m */,
-				A357A01118323A58001C87B6 /* Tweet.h */,
-				A357A01218323A58001C87B6 /* Tweet.m */,
+				A3AF31B81834B93600890368 /* User.h */,
+				A3AF31B91834B93600890368 /* User.m */,
+				A3AF31B51834B93500890368 /* Tweet.h */,
+				A3AF31B61834B93500890368 /* Tweet.m */,
 			);
 			name = "Core Data";
 			sourceTree = "<group>";
@@ -314,6 +317,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A3AF31BC1834DED100890368 /* default_profile_image.png in Resources */,
 				A308A31317EC9C43007ED531 /* InfoPlist.strings in Resources */,
 				A308A31B17EC9C43007ED531 /* Default.png in Resources */,
 				A37DE120182CF9A40056C4F3 /* indexBackground.jpg in Resources */,
@@ -330,8 +334,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A357A01018323A57001C87B6 /* User.m in Sources */,
-				A357A01318323A58001C87B6 /* Tweet.m in Sources */,
+				A3AF31BA1834B93600890368 /* User.m in Sources */,
+				A3AF31B71834B93500890368 /* Tweet.m in Sources */,
 				A348249518064E9E0027D43F /* AFURLConnectionOperation.m in Sources */,
 				A3551C3D182D117E0055B35D /* SaveResults.m in Sources */,
 				A348249718064E9E0027D43F /* UIImageView+AFNetworking.m in Sources */,

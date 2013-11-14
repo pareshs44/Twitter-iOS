@@ -3,7 +3,7 @@
     <dependencies>
         <deployment version="1792" defaultVersion="1552" identifier="iOS"/>
         <development version="5000" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3746"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
     <scenes>
         <!--Index View Controller-->
@@ -67,7 +67,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="hT7-xe-Obm">
-                            <rect key="frame" x="0.0" y="64" width="320" height="97"/>
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="97"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="505" verticalHuggingPriority="511" verticalCompressionResistancePriority="749" placeholderIntrinsicWidth="40" placeholderIntrinsicHeight="46" translatesAutoresizingMaskIntoConstraints="NO" id="utp-J9-5xJ">
@@ -144,12 +144,12 @@
                             </constraints>
                         </view>
                         <activityIndicatorView key="tableFooterView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" id="PoW-fK-2Cd">
-                            <rect key="frame" x="0.0" y="264" width="320" height="20"/>
+                            <rect key="frame" x="0.0" y="200" width="320" height="20"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </activityIndicatorView>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userProfileTweet" rowHeight="81" id="c6A-H5-mUl" customClass="TweetCell">
-                                <rect key="frame" x="0.0" y="183" width="320" height="81"/>
+                                <rect key="frame" x="0.0" y="119" width="320" height="81"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="c6A-H5-mUl" id="174-uB-3t1">
                                     <rect key="frame" x="0.0" y="0.0" width="287" height="80"/>
@@ -240,12 +240,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <activityIndicatorView key="tableFooterView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" id="nFW-H6-569">
-                            <rect key="frame" x="0.0" y="167" width="320" height="20"/>
+                            <rect key="frame" x="0.0" y="103" width="320" height="20"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </activityIndicatorView>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="tweet" rowHeight="81" id="7bb-ef-rSC" customClass="TweetCell">
-                                <rect key="frame" x="0.0" y="86" width="320" height="81"/>
+                                <rect key="frame" x="0.0" y="22" width="320" height="81"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="7bb-ef-rSC" id="gE4-rU-nnM">
                                     <rect key="frame" x="0.0" y="0.0" width="287" height="80"/>
@@ -331,12 +331,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <activityIndicatorView key="tableFooterView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" id="gpb-r4-CyY">
-                            <rect key="frame" x="0.0" y="167" width="320" height="20"/>
+                            <rect key="frame" x="0.0" y="103" width="320" height="20"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </activityIndicatorView>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userTweet" rowHeight="81" id="RA7-Ec-Xh0" customClass="TweetCell">
-                                <rect key="frame" x="0.0" y="86" width="320" height="81"/>
+                                <rect key="frame" x="0.0" y="22" width="320" height="81"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RA7-Ec-Xh0" id="tet-mG-iOU">
                                     <rect key="frame" x="0.0" y="0.0" width="287" height="80"/>
@@ -539,6 +539,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="cs5-c9-E3N"/>
+        <segue reference="VNC-KA-Z4D"/>
     </inferredMetricsTieBreakers>
 </document>

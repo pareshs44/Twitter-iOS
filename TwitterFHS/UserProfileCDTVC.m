@@ -25,6 +25,7 @@
 @property (weak, nonatomic) NSManagedObjectContext *mainContext;
 @property (weak, nonatomic) TwitterOAuthClient *twitterClient;
 @property (strong, nonatomic) TweetCell *prototypeCell;
+@property (strong, nonatomic) UIImage *profileImage;
 
 @end
 
@@ -63,6 +64,11 @@
     return _prototypeCell;
 }
 
+- (void)setProfileImage:(UIImage *)profileImage
+{
+    _profileImage = profileImage;
+}
+
 - (void)setUpFetchedResultsController
 {
     NSAssert(self.mainContext, @"Main Context not set.");
@@ -89,7 +95,11 @@
     self.followersCount.text = [NSString stringWithFormat:@"%@", user.followersCount];
     self.followingCount.text = [NSString stringWithFormat:@"%@", user.followingCount];
     self.tweetsCount.text = [NSString stringWithFormat:@"%@", user.tweetsCount];
-    self.userImage.image = [[UIImage alloc]initWithData:user.thumbnail];
+    NSURL *imageURL = [[NSURL alloc]
+                       initWithString:user.imageURL];
+    self.profileImage = [UIImage imageWithData:
+                         [NSData dataWithContentsOfURL:imageURL]];
+    self.userImage.image = self.profileImage;
 }
 
 - (IBAction)refresh {
@@ -133,7 +143,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (CGFloat)tableView:(UITableView *)tableView
 estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return FIXED_HEIGHT;
+    return UITableViewAutomaticDimension;
 }
 
 - (TweetCell *)tableView:(UITableView *)tableView
@@ -145,8 +155,7 @@ estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSDateFormatter *displayDateFormat = [[NSDateFormatter alloc] init];
     [displayDateFormat setDateFormat:@"MMM dd HH:mm"];
     cell.timeLabel.text = [displayDateFormat stringFromDate:tweet.time];
-    UIImage *image = [[UIImage alloc] initWithData:tweet.createdBy.thumbnail];
-    cell.thumbnailImageView.image = image;
+    cell.thumbnailImageView.image = self.profileImage;
     return cell;
 }
 

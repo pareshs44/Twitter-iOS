@@ -11,6 +11,6 @@
 
 @interface TweetDetailsCDTVC : CoreDataTableViewController
 
-@property (nonatomic, strong) User * createdBy;
+@property (nonatomic, strong) User *createdBy;
 
 @end

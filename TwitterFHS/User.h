@@ -2,7 +2,7 @@
 //  User.h
 //  TwitterFHS
 //
-//  Created by Paresh Shukla on 11/12/13.
+//  Created by Paresh Shukla on 11/14/13.
 //  Copyright (c) 2013 Paresh Shukla. All rights reserved.
 //
 
@@ -17,7 +17,7 @@
 @property (nonatomic, retain) NSNumber * followingCount;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * screenName;
-@property (nonatomic, retain) NSData * thumbnail;
+@property (nonatomic, retain) NSString * imageURL;
 @property (nonatomic, retain) NSNumber * tweetsCount;
 @property (nonatomic, retain) NSString * unique;
 @property (nonatomic, retain) NSSet *tweets;

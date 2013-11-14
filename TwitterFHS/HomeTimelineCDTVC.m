@@ -20,6 +20,8 @@
 @property (weak, nonatomic) NSManagedObjectContext *mainContext;
 @property (weak, nonatomic) TwitterOAuthClient *twitterClient;
 @property (strong, nonatomic) TweetCell *prototypeCell;
+@property (strong, nonatomic) NSCache *imageCache;
+@property (strong, nonatomic) NSOperationQueue *queue;
 
 @end
 
@@ -27,6 +29,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.queue = [[NSOperationQueue alloc] init];
+    self.queue.maxConcurrentOperationCount = 4;
     [self.refreshControl addTarget:self
                             action:@selector(refresh)
                   forControlEvents:UIControlEventValueChanged];
@@ -106,7 +110,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (CGFloat)tableView:(UITableView *)tableView
 estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return FIXED_HEIGHT;
+    return UITableViewAutomaticDimension;
 }
 
 - (TweetCell *)tableView:(UITableView *)tableView
@@ -118,8 +122,7 @@ estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSDateFormatter *displayDateFormat = [[NSDateFormatter alloc] init];
     [displayDateFormat setDateFormat:@"MMM dd HH:mm"];
     cell.timeLabel.text = [displayDateFormat stringFromDate:tweet.time];
-    UIImage * image = [[UIImage alloc] initWithData:tweet.createdBy.thumbnail];
-    cell.thumbnailImageView.image = image;
+    [self setImageOfTweet:tweet forCell:cell atIndexPath:indexPath];
     return cell;
 }
 
@@ -135,10 +138,10 @@ estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     __block BOOL isFetching = FALSE;
     if((y > h + reload_distance) && !isFetching) {
         isFetching = !isFetching;
+        [self.activityIndicator startAnimating];
         NSIndexPath *path = [self.tableView indexPathForCell:[[self.tableView visibleCells] lastObject]];
         Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:path];
         NSString *maxId = tweet.unique;
-        [self.activityIndicator startAnimating];
         [self fetchTweetsWithMaxId:maxId withSuccess:^{
             isFetching = !isFetching;
             [self.activityIndicator stopAnimating];
@@ -146,17 +149,45 @@ estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     }
 }
 
+- (void)setImageOfTweet:(Tweet *)tweet
+                forCell:(TweetCell *)cell
+            atIndexPath:(NSIndexPath *)indexPath
+{
+    UIImage *image = [self.imageCache objectForKey:tweet.createdBy.imageURL];
+    if(image) {
+        cell.thumbnailImageView.image = image;
+    }
+    else {
+        cell.thumbnailImageView.image =[UIImage imageNamed:@"default_profile_image.png"];
+        [self.queue addOperationWithBlock:^{
+            NSURL *imageURL = [[NSURL alloc]
+                               initWithString:tweet.createdBy.imageURL];
+            UIImage *image = [UIImage imageWithData:
+                              [NSData dataWithContentsOfURL:imageURL]];
+            if(image) {
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    TweetCell *cell = (TweetCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+                    if (cell) {
+                        cell.thumbnailImageView.image = image;
+                    }
+                }];
+                [self.imageCache setObject:image forKey:tweet.createdBy.imageURL];
+            }
+        }];
+    }
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     NSIndexPath * indexPath = nil;
-    NSAssert([sender isKindOfClass:[UITableViewCell class]],
-             @"Can not segue from any sender other than table view cell.");
-    indexPath = [self.tableView indexPathForCell:sender];
-    NSAssert(indexPath, @"Can not segue from an indexPath having a nil value.");
-    if([segue.identifier isEqualToString:@"tweetDetails"]) {
-        Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
-        User *createdBy = tweet.createdBy;
-        [segue.destinationViewController
-         performSelector:@selector(setCreatedBy:) withObject:createdBy];
+    if ([sender isKindOfClass:[UITableViewCell class]]) {
+        indexPath = [self.tableView indexPathForCell:sender];
+        NSAssert(indexPath, @"Can not segue from an indexPath having a nil value.");
+        if([segue.identifier isEqualToString:@"tweetDetails"]) {
+            Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
+            User *createdBy = tweet.createdBy;
+            [segue.destinationViewController
+             performSelector:@selector(setCreatedBy:) withObject:createdBy];
+        }
     }
 }
 

@@ -58,9 +58,14 @@
 }
 
 - (void)contextDidSave:(NSNotification *)notification {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    if(![NSThread isMainThread]) {
+        [self.mainContext performBlock:^{
+            [self.mainContext mergeChangesFromContextDidSaveNotification:notification];
+        }];
+    }
+    else {
         [self.mainContext mergeChangesFromContextDidSaveNotification:notification];
-    });
+    }
 }
 
 - (void)setManagedObjectContextFromDocument:(UIManagedDocument *)document

@@ -19,7 +19,6 @@
                                                                   ascending:YES]];
         request.predicate = [NSPredicate
                              predicateWithFormat:@"unique = %@", userDictionary[@"id_str"]];
-        
         NSError *error;
         NSArray *matches = [context executeFetchRequest:request error:&error];
         
@@ -33,9 +32,10 @@
             user.followersCount = userDictionary[@"followers_count"];
             user.followingCount = userDictionary[@"friends_count"];
             user.tweetsCount = userDictionary[@"statuses_count"];
-            NSURL *imageURL = [[NSURL alloc]
-                               initWithString:[userDictionary valueForKey:@"profile_image_url"]];
-            user.thumbnail = [[NSData alloc] initWithContentsOfURL:imageURL];
+            user.imageURL = userDictionary[@"profile_image_url"];
+            //NSURL *imageURL = [[NSURL alloc]
+            //                   initWithString:[userDictionary valueForKey:@"profile_image_url"]];
+            //user.thumbnail = [[NSData alloc] initWithContentsOfURL:imageURL];
         }
         else {
             user = [matches lastObject];

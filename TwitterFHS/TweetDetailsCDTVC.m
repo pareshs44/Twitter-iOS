@@ -18,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 @property (weak, nonatomic) TwitterOAuthClient *twitterClient;
 @property (strong, nonatomic) TweetCell *prototypeCell;
+@property (strong, nonatomic) UIImage *profileImage;
 
 @end
 
@@ -53,6 +54,16 @@
         _prototypeCell = [self.tableView dequeueReusableCellWithIdentifier:@"userTweet"];
     }
     return _prototypeCell;
+}
+
+- (UIImage *)profileImage {
+    if(!_profileImage) {
+        NSURL *imageURL = [[NSURL alloc]
+                           initWithString:self.createdBy.imageURL];
+        _profileImage = [UIImage imageWithData:
+                          [NSData dataWithContentsOfURL:imageURL]];
+    }
+    return _profileImage;
 }
 
 - (void)setupFetchedResultsController {
@@ -108,7 +119,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (CGFloat)tableView:(UITableView *)tableView
 estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return FIXED_HEIGHT;
+    return UITableViewAutomaticDimension;
 }
 
 - (TweetCell *)tableView:(UITableView *)tableView
@@ -120,8 +131,7 @@ estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSDateFormatter *displayDateFormat = [[NSDateFormatter alloc] init];
     [displayDateFormat setDateFormat:@"MMM dd HH:mm"];
     cell.timeLabel.text = [displayDateFormat stringFromDate:tweet.time];
-    UIImage *image = [[UIImage alloc] initWithData:tweet.createdBy.thumbnail];
-    cell.thumbnailImageView.image = image;
+    cell.thumbnailImageView.image = self.profileImage;
     return cell;
 }
 
